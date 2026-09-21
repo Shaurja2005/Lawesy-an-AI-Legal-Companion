@@ -1,0 +1,15 @@
+{
+  "answer": "Yes, you must pay rent on the 1st of every month.",
+  "citations": [
+    {
+      "clauseId": "S3.1",
+      "quote": "Tenant shall pay to Landlord as rent for the Premises the sum of $1000 per month, due on the first day of each month."
+    }
+  ],
+  "foundInDocument": true,
+  "confidence": "high",
+  "followUps": [
+    "What is the penalty for late rent?",
+    "Can I pay rent online?"
+  ]
+}

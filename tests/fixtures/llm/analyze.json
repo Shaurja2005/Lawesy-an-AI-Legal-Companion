@@ -1,0 +1,33 @@
+{
+  "analyses": [
+    {
+      "clauseId": "S3.1",
+      "title": "Monthly Rent",
+      "category": "payment",
+      "plainSummary": "You must pay $1000 on the 1st of each month.",
+      "risk": "low",
+      "riskReason": "Standard payment terms.",
+      "favorsParty": "neutral",
+      "obligations": [
+        {
+          "who": "user",
+          "action": "Pay rent on the 1st",
+          "clauseId": "S3.1"
+        }
+      ],
+      "deadlines": [
+        {
+          "description": "Rent payment",
+          "relative": "1st day of each month",
+          "clauseId": "S3.1"
+        }
+      ],
+      "citations": [
+        {
+          "clauseId": "S3.1",
+          "quote": "due on the first day of each month"
+        }
+      ]
+    }
+  ]
+}

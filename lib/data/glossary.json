@@ -1,0 +1,22 @@
+{
+  "indemnify": {
+    "definition": "To compensate someone for harm or loss. Essentially, promising to pay them back if your actions cost them money.",
+    "example": "If your dog damages the apartment, you indemnify the landlord for the repair costs."
+  },
+  "force majeure": {
+    "definition": "Unforeseeable circumstances that prevent someone from fulfilling a contract (often called an 'act of God').",
+    "example": "A hurricane destroying a warehouse is a force majeure event that excuses a shipping delay."
+  },
+  "severability": {
+    "definition": "A rule stating that if one part of a contract is illegal or unenforceable, the rest of the contract still stands.",
+    "example": "If a lease has an illegal late fee, severability means the rest of the lease is still valid."
+  },
+  "arbitration": {
+    "definition": "A private process where a neutral person (an arbitrator) decides a dispute, instead of going to public court.",
+    "example": "You give up your right to sue the company in court and must use their arbitration process instead."
+  },
+  "lien": {
+    "definition": "A legal right to keep possession of property belonging to another person until a debt owed by that person is discharged.",
+    "example": "A mechanic puts a lien on your car until you pay the repair bill."
+  }
+}

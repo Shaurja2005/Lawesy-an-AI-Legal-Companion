@@ -1,0 +1,16 @@
+{
+  "oneLine": "This is a residential lease agreement.",
+  "keyPoints": [
+    "You must pay rent on the 1st of every month.",
+    "The landlord handles structural repairs."
+  ],
+  "parties": ["Landlord", "Tenant"],
+  "term": "1 year",
+  "money": ["$1000/month", "$1000 deposit"],
+  "citations": [
+    {
+      "clauseId": "S3.1",
+      "quote": "Tenant shall pay to Landlord as rent for the Premises the sum of $1000 per month"
+    }
+  ]
+}

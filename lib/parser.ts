@@ -40,7 +40,7 @@ function generateId(): string {
   return `doc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function normalizeText(text: string): string {
+export function normalizeText(text: string): string {
   return text
     .replace(/\s+/g, ' ')
     .replace(/[\u201C\u201D]/g, '"')
