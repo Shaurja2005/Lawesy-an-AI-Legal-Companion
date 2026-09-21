@@ -211,3 +211,16 @@ export async function clearChatHistory(docId: string): Promise<void> {
   });
 }
 
+/** Permanently wipe the entire Lawesy IndexedDB database (all stores). */
+export function clearAllData(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.deleteDatabase(DB_NAME);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+    req.onblocked = () => {
+      // Force-close any open connections and retry
+      console.warn('[DB] clearAllData blocked — close other tabs and try again');
+      reject(new Error('Database is open in another tab. Please close other Lawesy tabs and try again.'));
+    };
+  });
+}

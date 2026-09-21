@@ -142,3 +142,22 @@
     }
   }
 }
+
+/* ── Script-specific font overrides ─────────────────────────────────────────── */
+/* When the HTML lang is Hindi or Tamil, ensure body copy renders with the
+   correct script font (Noto Sans Devanagari / Noto Sans Tamil).
+   The heading/UI fonts still use their CSS variables but Noto is prepended
+   as the first fallback so all Devanagari/Tamil glyphs resolve correctly.  */
+
+:lang(hi) body,
+:lang(hi) .font-body,
+:lang(hi) .font-ui {
+  font-family: var(--font-devanagari), var(--font-ui), system-ui, sans-serif;
+}
+
+:lang(ta) body,
+:lang(ta) .font-body,
+:lang(ta) .font-ui {
+  font-family: var(--font-tamil), var(--font-ui), system-ui, sans-serif;
+}
+

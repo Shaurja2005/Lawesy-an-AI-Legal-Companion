@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { LanguageSwitcher } from '@/components/ui/language-switcher';
 
 export function SiteHeader() {
   return (
@@ -15,6 +16,7 @@ export function SiteHeader() {
         Lawesy
       </Link>
       <div className="flex items-center gap-2">
+        <LanguageSwitcher />
         <ThemeToggle />
       </div>
     </header>

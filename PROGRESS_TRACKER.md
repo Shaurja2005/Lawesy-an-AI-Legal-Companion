@@ -66,7 +66,7 @@
 | F34 | Checklist & deadline tracker | J | F33 | ✅ | 2026-09-22 | 2026-09-22 | components/features/checklist.tsx with .ics export |
 | F35 | Lawyer-prep brief | J | F33 | ✅ | 2026-09-22 | 2026-09-22 | Printable brief at app/(app)/brief/[docId] |
 | F36 | Export & share (local) | J | F24, F27, F35 | ✅ | 2026-09-22 | 2026-09-22 | lib/export.ts generating local markdown files |
-| F37 | Multilingual output & UI | K | F23–F36 | ⬜ | | | |
+| F37 | Multilingual output & UI | K | F23–F36 | ✅ | 2026-09-22 | 2026-09-22 | /lib/i18n setup, Settings toggle, Devanagari/Tamil fonts loaded via next/font in layout + CSS override |
 | F38 | Security hardening | L | F16 | ⬜ | | | |
 | F39 | Performance & efficiency | L | F30, F32 | ⬜ | | | |
 | F40 | Full test suite & a11y audit | L | F37 | ⬜ | | | |
@@ -182,7 +182,7 @@ Evidence: Checklist component with ICS export, Lawyer Brief page with print styl
 | 2026-09-22 | F14–F28 (M2) | AI adapter (Vercel AI SDK + mock), full prompt registry, API routes, guards, caching, onboarding, classifier, decision engine, escalation, summary card, plain-language tab, glossary highlighter, risk stamps, inconsistency checks. | lib/ai/*, lib/engine/*, lib/schemas/*, app/api/*, hooks/use-analysis.ts, components/features/* | Gemini API key wired in .env |
 | 2026-09-22 | F29–F36 (M3) | Blocks H–J: minisearch retrieval, streaming Q&A chat (IndexedDB history, citation pills), clause alignment engine, compare API + side-by-side compare page, compare modal, checklist with .ics export, lawyer brief page, markdown export. | lib/search/index.ts, lib/engine/compare.ts, app/api/{ask,compare}/route.ts, components/features/{chat-panel,compare-modal,checklist}.tsx, app/(app)/compare, app/(app)/brief | None |
 | 2026-09-22 | Audit + F23/F32 | Reality-check session: found /compare and /about were empty stubs, Plain Language tab had hardcoded text. Fixed all three. About page now real content; Compare /compare landing page real; Plain Language tab calls /api/simplify via PlainLanguageSection per-section on demand. | app/(app)/about/page.tsx, app/(app)/compare/page.tsx, components/features/plain-language-section.tsx, desk/[docId]/page.tsx | None |
-
+| 2026-09-22 | F37 (Block K) | Multilingual output & UI support. Fully localized dictionary for en, hi (Hindi), ta (Tamil). Added font overrides for correct Indian script rendering. Built settings page with language/theme/PII toggles. Added global language switcher in header. | lib/i18n/*, components/providers/i18n-provider.tsx, app/layout.tsx, app/globals.css, app/(app)/settings/page.tsx, components/ui/language-switcher.tsx | Implement UI strings using the new `tr` translation object across the rest of the application |
 
 ---
 
