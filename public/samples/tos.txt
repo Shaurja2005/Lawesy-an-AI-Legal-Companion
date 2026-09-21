@@ -1,0 +1,15 @@
+# TERMS OF SERVICE
+
+Welcome to CloudApp. By using our services, you agree to these terms.
+
+1. USE OF SERVICE
+You must use the Service in compliance with all applicable laws. You may not use the Service to store or transmit infringing, libelous, or otherwise unlawful material.
+
+2. USER CONTENT
+You retain all rights to any data or content you upload to the Service ("User Content"). You grant us a non-exclusive license to use, host, and process your User Content solely for the purpose of providing the Service.
+
+3. TERMINATION
+We may suspend or terminate your access to the Service at any time, for any reason, including if we reasonably believe you have violated these Terms.
+
+4. LIMITATION OF LIABILITY
+To the maximum extent permitted by law, CloudApp shall not be liable for any indirect, incidental, special, consequential or punitive damages, or any loss of profits or revenues.

@@ -1,0 +1,20 @@
+# EMPLOYMENT OFFER LETTER
+
+Dear [Candidate Name],
+
+We are pleased to offer you the position of Software Engineer at Acme Corp ("the Company").
+
+1. POSITION AND DUTIES
+You will report to the Engineering Manager. Your duties will include software development, testing, and other tasks as assigned.
+
+2. COMPENSATION
+Your starting base salary will be $[Amount] per year, paid semi-monthly.
+
+3. BENEFITS
+You will be eligible to participate in the Company's standard employee benefit plans, including health insurance and 401(k), subject to the terms of those plans.
+
+4. AT-WILL EMPLOYMENT
+Your employment with the Company is "at-will." This means that either you or the Company may terminate the employment relationship at any time, with or without cause or advance notice.
+
+5. CONFIDENTIALITY
+You will be required to sign the Company's standard Employee Non-Disclosure and Invention Assignment Agreement as a condition of your employment.

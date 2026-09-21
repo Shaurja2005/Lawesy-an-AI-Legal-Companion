@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+@theme {
+  --color-desk: var(--desk);
+  --color-desk-grain: var(--desk-grain);
+  --color-desk-edge: var(--desk-edge);
+  --color-paper: var(--paper);
+  --color-paper-alt: var(--paper-alt);
+  --color-paper-line: var(--paper-line);
+  --color-card: var(--card);
+  --color-sticky: var(--sticky);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-ink-on-desk: var(--ink-on-desk);
+  --color-accent: var(--accent);
+  --color-brass: var(--brass);
+  --color-risk-high: var(--risk-high);
+  --color-risk-medium: var(--risk-medium);
+  --color-risk-low: var(--risk-low);
+  --color-risk-info: var(--risk-info);
+  --color-highlight: var(--highlight);
+  --color-focus-ring: var(--focus-ring);
+  
+  --shadow-sheet: var(--shadow-sheet);
+  --shadow-lifted: var(--shadow-lifted);
+
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+  --font-ui: var(--font-ui);
+  --font-mono: var(--font-mono);
+}
+
+
+@layer base {
+  :root {
+    --desk: #B98B5E;
+    --desk-grain: #A67A4F;
+    --desk-edge: #8C6239;
+    --paper: #F8F2E4;
+    --paper-alt: #F1E8D4;
+    --paper-line: #D9CBB0;
+    --card: #FFFBF2;
+    --sticky: #F3E3A2;
+    --ink: #2B2118;
+    --ink-muted: #5C4A3A;
+    --ink-faint: #7A6652;
+    --ink-on-desk: #FFF8EA;
+    --accent: #2C4A6E;
+    --brass: #8A6A2F;
+    --risk-high: #9B2C2C;
+    --risk-medium: #8A5A12;
+    --risk-low: #2F5D3A;
+    --risk-info: #4A5568;
+    --highlight: #F6E27A66;
+    --focus-ring: #2C4A6E;
+
+    --shadow-sheet: 0 1px 2px rgb(40 25 10 / .18), 0 6px 16px rgb(40 25 10 / .12);
+    --shadow-lifted: 0 2px 4px rgb(40 25 10 / .2), 0 14px 28px rgb(40 25 10 / .18);
+  }
+
+  .dark {
+    --desk: #1A120C;
+    --desk-grain: #24190F;
+    --desk-edge: #0F0A06;
+    --paper: #2A2119;
+    --paper-alt: #332820;
+    --paper-line: #46382C;
+    --card: #302519;
+    --sticky: #4A4125;
+    --ink: #EFE5D2;
+    --ink-muted: #C2B39C;
+    --ink-faint: #9C8C76;
+    --ink-on-desk: #EFE5D2;
+    --accent: #9DB8DA;
+    --brass: #D8B46A;
+    --risk-high: #E4887C;
+    --risk-medium: #E0B060;
+    --risk-low: #8DC49A;
+    --risk-info: #B5BFCC;
+    --highlight: #D8B46A40;
+    --focus-ring: #9DB8DA;
+
+    --shadow-sheet: 0 1px 2px rgb(0 0 0 / .4), 0 6px 16px rgb(0 0 0 / .3);
+    --shadow-lifted: 0 2px 4px rgb(0 0 0 / .5), 0 14px 28px rgb(0 0 0 / .4);
+  }
+
+  * {
+    @apply border-paper-line;
+  }
+  
+  body {
+    @apply bg-desk text-ink min-h-screen relative overflow-x-hidden antialiased;
+    /* Basic wood grain texture via CSS gradient noise overlay */
+    background-image: 
+      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="a"><feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" result="noise"/><feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.08 0"/></filter><rect width="100%" height="100%" filter="url(%23a)"/></svg>'),
+      repeating-linear-gradient(to bottom, transparent, transparent 2px, var(--desk-grain) 2px, transparent 4px);
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-offset-2 ring-focus-ring ring-offset-paper;
+  }
+
+  /* High contrast overrides */
+  .high-contrast {
+    --paper: #ffffff;
+    --paper-alt: #f0f0f0;
+    --ink: #000000;
+    --ink-muted: #1a1a1a;
+    --paper-line: #767676;
+    --accent: #0000cc;
+    --risk-high: #cc0000;
+    --risk-low: #006600;
+  }
+
+  .dark.high-contrast {
+    --paper: #000000;
+    --paper-alt: #1a1a1a;
+    --ink: #ffffff;
+    --ink-muted: #e0e0e0;
+    --paper-line: #767676;
+    --accent: #66aaff;
+    --risk-high: #ff6666;
+    --risk-low: #66cc66;
+  }
+
+  /* Reduced-motion: strip animations project-wide (supplements prefers-reduced-motion) */
+  .high-contrast *,
+  .high-contrast *::before,
+  .high-contrast *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    background-image: none !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

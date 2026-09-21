@@ -1,0 +1,18 @@
+# RESIDENTIAL LEASE AGREEMENT
+
+This Residential Lease Agreement ("Lease") is made and entered into on [Date], by and between [Landlord Name] ("Landlord") and [Tenant Name] ("Tenant").
+
+1. PREMISES
+Landlord hereby leases to Tenant, and Tenant hereby leases from Landlord, the premises located at [Address] (the "Premises").
+
+2. TERM
+The term of this Lease shall be for a period of one (1) year, commencing on [Start Date] and ending on [End Date].
+
+3. RENT
+Tenant shall pay to Landlord as rent for the Premises the sum of $[Amount] per month, due on the first day of each month.
+
+4. SECURITY DEPOSIT
+Upon the execution of this Lease, Tenant shall deposit with Landlord the sum of $[Amount] as security for the full and faithful performance by Tenant of all terms of this Lease.
+
+5. MAINTENANCE AND REPAIR
+Tenant will, at Tenant's sole expense, keep and maintain the Premises in good and sanitary condition during the term of this Lease. Landlord shall be responsible for all structural repairs.
