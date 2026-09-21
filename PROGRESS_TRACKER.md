@@ -52,7 +52,7 @@
 | F20 | Document type & sensitivity classifier | E | F16, F11 | ✅ | 2026-09-22 | 2026-09-22 | lib/engine/classifier.ts, /api/classify, components/features/type-stamp.tsx |
 | F21 | Decision engine | E | F19, F20 | ✅ | 2026-09-22 | 2026-09-22 | lib/engine/decide.ts (R1–R12), lib/engine/focus-maps.ts |
 | F22 | Escalation & urgency system | E | F21 | ✅ | 2026-09-22 | 2026-09-22 | components/features/escalation-banner.tsx, lib/engine/resources.ts |
-| F23 | Plain-language simplifier | F | F18, F21 | ✅ | 2026-09-22 | 2026-09-22 | /api/simplify route + Plain Language tab in desk/[docId] workspace |
+| F23 | Plain-language simplifier | F | F18, F21 | ✅ | 2026-09-22 | 2026-09-22 | /api/simplify real + PlainLanguageSection component with on-demand API call per section |
 | F24 | Structured summary | F | F23 | ✅ | 2026-09-22 | 2026-09-22 | components/features/summary-card.tsx, /api/summarize |
 | F25 | Legal glossary & term explainer | F | F23 | ✅ | 2026-09-22 | 2026-09-22 | lib/data/glossary.json, components/features/term-highlighter.tsx |
 | F26 | Clause extraction & classification | G | F18, F21 | ✅ | 2026-09-22 | 2026-09-22 | /api/analyze, Key Clauses tab in workspace |
@@ -61,7 +61,7 @@
 | F29 | Client-side retrieval | H | F11 | ✅ | 2026-09-22 | 2026-09-22 | Minisearch integrated in lib/search |
 | F30 | Grounded Q&A chat | H | F29, F17, F21 | ✅ | 2026-09-22 | 2026-09-22 | Streaming chat in /api/ask with custom manual fetch |
 | F31 | Clause alignment | I | F26 | ✅ | 2026-09-22 | 2026-09-22 | Jaccard similarity alignment in lib/engine/compare |
-| F32 | Comparison report | I | F31 | ✅ | 2026-09-22 | 2026-09-22 | /api/compare and side-by-side UI in compare page |
+| F32 | Comparison report | I | F31 | ✅ | 2026-09-22 | 2026-09-22 | /api/compare, side-by-side compare/[docId1]/[docId2] UI, real /compare landing page |
 | F33 | Options & next-steps navigator | J | F27, F22 | ✅ | 2026-09-22 | 2026-09-22 | Implemented in Next Steps tab |
 | F34 | Checklist & deadline tracker | J | F33 | ✅ | 2026-09-22 | 2026-09-22 | components/features/checklist.tsx with .ics export |
 | F35 | Lawyer-prep brief | J | F33 | ✅ | 2026-09-22 | 2026-09-22 | Printable brief at app/(app)/brief/[docId] |
@@ -180,6 +180,9 @@ Evidence: Checklist component with ICS export, Lawyer Brief page with print styl
 | 2026-09-22 | F01 | Scaffolded Next.js with pnpm, Tailwind, Prettier. Configured Vitest and Playwright. Created folder structure. | package.json, vitest.config.ts, playwright.config.ts, folders | None |
 | 2026-09-22 | F02–F13 (M1) | Blocks A–C complete. Design tokens, UI components, nav shell, upload/parse pipeline, IndexedDB library, PII redaction. | 50+ files across app/, components/, lib/, hooks/ | None |
 | 2026-09-22 | F14–F28 (M2) | AI adapter (Vercel AI SDK + mock), full prompt registry, API routes, guards, caching, onboarding, classifier, decision engine, escalation, summary card, plain-language tab, glossary highlighter, risk stamps, inconsistency checks. | lib/ai/*, lib/engine/*, lib/schemas/*, app/api/*, hooks/use-analysis.ts, components/features/* | Gemini API key wired in .env |
+| 2026-09-22 | F29–F36 (M3) | Blocks H–J: minisearch retrieval, streaming Q&A chat (IndexedDB history, citation pills), clause alignment engine, compare API + side-by-side compare page, compare modal, checklist with .ics export, lawyer brief page, markdown export. | lib/search/index.ts, lib/engine/compare.ts, app/api/{ask,compare}/route.ts, components/features/{chat-panel,compare-modal,checklist}.tsx, app/(app)/compare, app/(app)/brief | None |
+| 2026-09-22 | Audit + F23/F32 | Reality-check session: found /compare and /about were empty stubs, Plain Language tab had hardcoded text. Fixed all three. About page now real content; Compare /compare landing page real; Plain Language tab calls /api/simplify via PlainLanguageSection per-section on demand. | app/(app)/about/page.tsx, app/(app)/compare/page.tsx, components/features/plain-language-section.tsx, desk/[docId]/page.tsx | None |
+
 
 ---
 

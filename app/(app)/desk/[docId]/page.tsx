@@ -13,7 +13,7 @@ import { TypeStamp } from '@/components/features/type-stamp';
 import { SummaryCard } from '@/components/features/summary-card';
 import { EscalationBanner } from '@/components/features/escalation-banner';
 import { RiskStamp } from '@/components/features/risk-stamps';
-import { TermHighlighter } from '@/components/features/term-highlighter';
+import { PlainLanguageSection } from '@/components/features/plain-language-section';
 import { ChatPanel } from '@/components/features/chat-panel';
 import { CompareModal } from '@/components/features/compare-modal';
 import { Checklist } from '@/components/features/checklist';
@@ -168,24 +168,12 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ docId
 
           {activeTab === 'plain' && (
             <div className="space-y-8">
-              {parsed!.sections.map((section) => (
-                <div key={`plain-sec-${section.index}`} className="grid grid-cols-1 md:grid-cols-2 gap-8 border-b border-paper-line pb-8 last:border-0">
-                  <div>
-                    <h3 className="font-heading text-sm text-ink-muted mb-2 uppercase tracking-wide">Original</h3>
-                    <div className="font-body text-sm text-ink-muted opacity-80 leading-relaxed">
-                      {section.clauses.map(c => c.rawText).join(' ')}
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="font-heading text-sm text-accent mb-2 uppercase tracking-wide">Plain English</h3>
-                    <div className="font-body text-base text-ink leading-relaxed bg-accent/5 p-4 rounded border border-accent/10">
-                      <TermHighlighter text="This section explains the main rules. If you break them, there will be consequences. Force majeure may apply if circumstances are outside your control." />
-                    </div>
-                  </div>
-                </div>
+              {parsed!.sections.map((section, i) => (
+                <PlainLanguageSection key={`plain-sec-${section.index}`} section={section} index={i + 1} />
               ))}
             </div>
           )}
+
 
           {activeTab === 'clauses' && (
             <div className="space-y-8">
