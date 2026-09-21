@@ -38,7 +38,7 @@ describe('Environment config', () => {
   });
 
   it('should fail if unknown provider is given', async () => {
-    process.env.LLM_PROVIDER = 'unknown' as any;
+    process.env.LLM_PROVIDER = 'unknown';
     
     await expect(import('../../lib/env')).rejects.toThrow('Invalid environment variables');
   });

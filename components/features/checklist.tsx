@@ -40,7 +40,7 @@ export function Checklist({ docId, parsed }: { docId: string; parsed: any }) {
       'VERSION:2.0',
       'PRODID:-//Lawesy//NONSGML v1.0//EN',
       'BEGIN:VEVENT',
-      `UID:${Math.random().toString(36).substring(2)}@lawesy.app`,
+      `UID:${crypto.randomUUID()}@lawesy.app`,
       `DTSTAMP:${dtstamp}`,
       `DTSTART;VALUE=DATE:${dateStr}`,
       `SUMMARY:Deadline: ${deadline.description}`,

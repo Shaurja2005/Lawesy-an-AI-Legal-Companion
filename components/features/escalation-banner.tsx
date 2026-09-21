@@ -1,7 +1,6 @@
 'use client';
 
-import { Paper } from '@/components/ui/paper';
-import { ShieldAlert, ShieldCheck, Shield } from 'lucide-react';
+import { ShieldAlert, Shield } from 'lucide-react';
 import type { EscalationFlag } from '@/lib/engine/decide';
 
 interface EscalationBannerProps {
@@ -57,7 +56,7 @@ export function EscalationBanner({ escalation }: EscalationBannerProps) {
               <p className="text-sm font-semibold text-red-800 mb-1">Recommended Action:</p>
               <p className="text-sm text-ink-muted">
                 Please do not sign or agree to anything before consulting {escalation.suggestedProfessional}. 
-                You can use our "Prepare Brief" tool to help your lawyer get up to speed quickly.
+                You can use our &quot;Prepare Brief&quot; tool to help your lawyer get up to speed quickly.
               </p>
             </div>
           )}

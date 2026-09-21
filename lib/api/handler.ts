@@ -21,20 +21,27 @@ function getUpstashLimiter() {
   if (!url || !token) return null;
 
   // Lazily import so the edge bundle doesn't import Redis when not configured.
-  const { Redis }       = require('@upstash/redis');
-  const { Ratelimit }   = require('@upstash/ratelimit');
-
-  const redis = new Redis({ url, token });
-  const limit = serverEnv.RATE_LIMIT_PER_MIN;
-
-  const ratelimit = new Ratelimit({
-    redis,
-    limiter: Ratelimit.slidingWindow(limit, '1 m'),
-    analytics: true,
-    prefix: 'lawesy:rl',
-  });
+  let Redis: any;
+  let Ratelimit: any;
 
   upstashLimiter = async (ip: string): Promise<RateLimitResult> => {
+    if (!Redis || !Ratelimit) {
+      const upstashRedis = await import('@upstash/redis');
+      const upstashRatelimit = await import('@upstash/ratelimit');
+      Redis = upstashRedis.Redis;
+      Ratelimit = upstashRatelimit.Ratelimit;
+    }
+
+    const redis = new Redis({ url, token });
+    const limit = serverEnv.RATE_LIMIT_PER_MIN;
+
+    const ratelimit = new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(limit, '1 m'),
+      analytics: true,
+      prefix: 'lawesy:rl',
+    });
+
     const result = await ratelimit.limit(ip);
     return { success: result.success, limit: result.limit, remaining: result.remaining };
   };
@@ -152,7 +159,7 @@ export function withApiHandler<T>(
 
       return response;
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[API Error]', error);
       return NextResponse.json(
         { error: { code: 'INTERNAL_SERVER_ERROR', message: 'An unexpected error occurred while processing the request.' } },

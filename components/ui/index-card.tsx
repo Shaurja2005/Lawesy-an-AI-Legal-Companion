@@ -1,7 +1,7 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-export interface IndexCardProps extends React.HTMLAttributes<HTMLDivElement> {}
+export type IndexCardProps = React.HTMLAttributes<HTMLDivElement>;
 
 const IndexCard = React.forwardRef<HTMLDivElement, IndexCardProps>(
   ({ className, children, ...props }, ref) => {

@@ -69,7 +69,7 @@ export function ChatPanel({ document, onClauseClick }: ChatPanelProps) {
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
-      let assistantMsg: ChatMessage = { id: (Date.now() + 1).toString(), role: 'assistant', content: '', createdAt: Date.now() };
+      const assistantMsg: ChatMessage = { id: (Date.now() + 1).toString(), role: 'assistant', content: '', createdAt: Date.now() };
       
       setMessages([...newMessages, assistantMsg]);
 
@@ -129,7 +129,7 @@ export function ChatPanel({ document, onClauseClick }: ChatPanelProps) {
           </div>
         )}
 
-        {messages.map((m: any) => (
+        {messages.map((m: ChatMessage) => (
           <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[85%] rounded-lg px-4 py-3 text-sm ${
               m.role === 'user' 

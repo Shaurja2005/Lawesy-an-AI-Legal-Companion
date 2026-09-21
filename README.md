@@ -1,34 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lawesy - AI Legal Companion
 
-## Getting Started
+Lawesy is an intelligent legal document analysis tool. It translates dense contracts into plain language, highlights hidden risks, and tells you what to watch out for based on your specific role and jurisdiction.
 
-First, run the development server:
+## Tech Stack
+- **Framework:** Next.js 15 (App Router)
+- **Styling:** Tailwind CSS & Custom CSS Variables (Design System)
+- **State & Storage:** IndexedDB (Local-first, privacy-focused storage)
+- **AI Integration:** Vercel AI SDK (@ai-sdk/google)
+- **Rate Limiting:** Upstash Redis (`@upstash/ratelimit`)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Architecture & Frameworks
+- **AI Processing:** Uses Google's Gemini models via the Vercel AI SDK to stream text and generate structured JSON schemas (Zod).
+- **Upstash Redis:** Used strictly for API rate-limiting to protect AI endpoints from abuse. No user documents or chat logs are stored in Redis — they remain entirely local to the user's browser via IndexedDB.
+- **Multilingual:** Built-in localization support for English, Hindi, and Tamil, with dynamic font fallbacks for Indian scripts (Noto Sans).
+- **Security:** Strict Content-Security-Policy (CSP) headers, HSTS, and nosniff rules implemented in middleware.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Local Development Startup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Shaurja2005/Lawesy-an-AI-Legal-Companion.git
+   cd Lawesy-an-AI-Legal-Companion
+   ```
 
-## Learn More
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+3. **Environment Setup**
+   Copy `.env.example` to `.env` (or create a new `.env` file) and fill in the required keys:
+   ```env
+   # LLM Provider Configuration
+   LLM_PROVIDER=gemini
+   LLM_MODEL=gemini-2.5-flash
+   GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_api_key_here
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   # Upstash Redis (For Rate Limiting)
+   UPSTASH_REDIS_REST_URL=your_upstash_rest_url
+   UPSTASH_REDIS_REST_TOKEN=your_upstash_rest_token
+   RATE_LIMIT_PER_MIN=30
+   ```
+   *Note: If Upstash keys are omitted, rate limiting is bypassed locally.*
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. **Run the development server**
+   ```bash
+   pnpm dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) with your browser to see the app.
 
-## Deploy on Vercel
+## Deployment to Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Lawesy is optimized for Vercel deployment.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Connect GitHub Repo to Vercel**
+   - Log into [Vercel](https://vercel.com) and click **Add New Project**.
+   - Import your GitHub repository (`Lawesy-an-AI-Legal-Companion`).
+
+2. **Configure Environment Variables**
+   - In the Vercel project configuration, add your API keys:
+     - `LLM_PROVIDER` (e.g., `gemini`)
+     - `LLM_MODEL` (e.g., `gemini-2.5-flash`)
+     - `GOOGLE_GENERATIVE_AI_API_KEY`
+     - `UPSTASH_REDIS_REST_URL`
+     - `UPSTASH_REDIS_REST_TOKEN`
+     - `RATE_LIMIT_PER_MIN`
+
+3. **Deploy**
+   - Vercel will automatically detect Next.js and run `pnpm build`.
+   - Once deployed, your site will be live. Subsequent pushes to the `main` branch will trigger automatic deployments.
+
+## Disclaimer
+Lawesy provides AI-generated information to help you understand documents. **This is not legal advice.** For any document with serious financial, legal, or personal consequences, please consult a qualified solicitor or lawyer in your jurisdiction.

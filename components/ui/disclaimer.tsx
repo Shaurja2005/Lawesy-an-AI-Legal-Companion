@@ -1,7 +1,7 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-export interface DisclaimerProps extends React.HTMLAttributes<HTMLDivElement> {}
+export type DisclaimerProps = React.HTMLAttributes<HTMLDivElement>;
 
 const Disclaimer = React.forwardRef<HTMLDivElement, DisclaimerProps>(
   ({ className, children, ...props }, ref) => {

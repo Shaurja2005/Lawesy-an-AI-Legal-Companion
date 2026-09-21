@@ -22,7 +22,11 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
   const [preferences, setPreferences] = useState<Preferences>(defaultPreferences);
 
   useEffect(() => {
-    setPreferences(loadPreferences());
+    let mounted = true;
+    Promise.resolve().then(() => {
+      if (mounted) setPreferences(loadPreferences());
+    });
+    return () => { mounted = false; };
   }, []);
 
   // Apply preferences to document root

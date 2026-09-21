@@ -32,9 +32,9 @@ type NestedKeyOf<T, Prefix extends string = ''> = {
 }[keyof T];
 
 /** Traverse a nested object by a dot-separated path */
-export function t<L extends Record<string, any>>(locale: L, path: string): string {
+export function t<L extends Record<string, unknown>>(locale: L, path: string): string {
   const parts = path.split('.');
-  let current: any = locale;
+  let current: unknown = locale;
   for (const part of parts) {
     if (current == null || typeof current !== 'object') return path;
     current = current[part];
@@ -47,8 +47,8 @@ export function t<L extends Record<string, any>>(locale: L, path: string): strin
  * Returns an array of missing key paths. Empty array = complete.
  */
 export function findMissingKeys(
-  locale: Record<string, any>,
-  reference: Record<string, any> = en,
+  locale: Record<string, unknown>,
+  reference: Record<string, unknown> = en,
   prefix = ''
 ): string[] {
   const missing: string[] = [];
@@ -57,7 +57,7 @@ export function findMissingKeys(
     if (!(key in locale)) {
       missing.push(fullKey);
     } else if (typeof reference[key] === 'object' && reference[key] !== null) {
-      missing.push(...findMissingKeys(locale[key], reference[key], fullKey));
+      missing.push(...findMissingKeys(locale[key] as Record<string, unknown>, reference[key] as Record<string, unknown>, fullKey));
     }
   }
   return missing;

@@ -47,16 +47,17 @@ function getModel(): LanguageModel {
  * Handle API retries with backoff for rate limits and server errors
  */
 async function withRetry<T>(operation: () => Promise<T>, retries = 2): Promise<T> {
-  let lastError: any;
+  let lastError: unknown;
   
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       return await operation();
-    } catch (error: any) {
+    } catch (error: unknown) {
       lastError = error;
       
       // Don't retry on client errors (4xx) EXCEPT rate limits (429)
-      const status = error?.statusCode ?? error?.status;
+      const err = error as Record<string, unknown>;
+      const status = (err?.statusCode ?? err?.status) as number | undefined;
       const isRateLimit = status === 429;
       const isServerError = status >= 500 && status < 600;
       
@@ -125,11 +126,12 @@ export async function generateStructured<T>(options: GenerateOptions<T>): Promis
 
       console.info(`[AI Adapter] Task: ${options.task} | Tokens: ${usage?.totalTokens || 'unknown'}`);
       return object;
-    } catch (error: any) {
-      if (error.name === 'TypeValidationError' || error.name === 'ZodError') {
+    } catch (error: unknown) {
+      const err = error as Error & { value?: unknown; data?: unknown; cause?: unknown };
+      if (err.name === 'TypeValidationError' || err.name === 'ZodError') {
         const { repairOutput } = await import('./repair');
         console.warn(`[AI Adapter] Schema validation failed for ${options.task}, attempting repair...`);
-        return await repairOutput(options.prompt, error.value ?? error.data, error.cause ?? error, options.schema);
+        return await repairOutput(options.prompt, err.value ?? err.data, err.cause ?? err, options.schema);
       }
       throw error;
     }

@@ -47,7 +47,7 @@ export default function OnboardingPage() {
             <label className="block text-sm font-semibold text-ink mb-1">Your Role</label>
             <Select 
               value={form.role} 
-              onValueChange={val => setForm({ ...form, role: val as any })}
+              onValueChange={val => setForm({ ...form, role: val as ProfileRole })}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a role" />
@@ -70,7 +70,7 @@ export default function OnboardingPage() {
             <label className="block text-sm font-semibold text-ink mb-1">Your Goal</label>
             <Select 
               value={form.goal} 
-              onValueChange={val => setForm({ ...form, goal: val as any })}
+              onValueChange={val => setForm({ ...form, goal: val as ProfileGoal })}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select your goal" />
@@ -90,7 +90,7 @@ export default function OnboardingPage() {
             <label className="block text-sm font-semibold text-ink mb-1">Legal Expertise</label>
             <Select 
               value={form.expertise} 
-              onValueChange={val => setForm({ ...form, expertise: val as any })}
+              onValueChange={val => setForm({ ...form, expertise: val as LegalExpertise })}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select expertise" />
@@ -126,7 +126,7 @@ export default function OnboardingPage() {
             <label className="block text-sm font-semibold text-ink mb-1">Language</label>
             <Select 
               value={form.outputLanguage} 
-              onValueChange={val => setForm({ ...form, outputLanguage: val as any })}
+              onValueChange={val => setForm({ ...form, outputLanguage: val as OutputLanguage })}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select language" />

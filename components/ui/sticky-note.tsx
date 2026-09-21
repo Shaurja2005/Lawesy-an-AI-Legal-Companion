@@ -1,7 +1,7 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-export interface StickyNoteProps extends React.HTMLAttributes<HTMLDivElement> {}
+export type StickyNoteProps = React.HTMLAttributes<HTMLDivElement>;
 
 const StickyNote = React.forwardRef<HTMLDivElement, StickyNoteProps>(
   ({ className, children, ...props }, ref) => {

@@ -33,7 +33,13 @@ export function useDocumentLibrary(): UseDocumentLibraryReturn {
     }
   }, []);
 
-  useEffect(() => { refresh(); }, [refresh]);
+  useEffect(() => { 
+    let mounted = true;
+    Promise.resolve().then(() => {
+      if (mounted) refresh(); 
+    });
+    return () => { mounted = false; };
+  }, [refresh]);
 
   const addDocument = useCallback(async (parsed: ParsedDocument) => {
     await saveDocument(parsed);

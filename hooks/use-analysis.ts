@@ -23,9 +23,9 @@ export function useAnalysis(docId: string, parsed?: ParsedDocument) {
     const docData = parsed;
 
     let mounted = true;
-    setLoading(true);
 
     async function runAnalysis() {
+      if (mounted) setLoading(true);
       // 1. Classification
       const classCacheKey = `class_${docId}_${profile.isOnboarded ? 'v1' : 'v0'}`;
       let cRes = await getAnalysisCache<ClassifierResult>(classCacheKey);

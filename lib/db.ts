@@ -35,9 +35,9 @@ function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
 
-    req.onupgradeneeded = (e: any) => {
+    req.onupgradeneeded = (e: Event) => {
       const db = req.result;
-      const oldVersion = e.oldVersion;
+      const oldVersion = (e as IDBVersionChangeEvent).oldVersion;
 
       if (oldVersion < 1) {
         if (!db.objectStoreNames.contains(STORE_DOCUMENTS)) {
@@ -123,8 +123,8 @@ export async function deleteDocument(id: string): Promise<void> {
     // Clear analyses for this document by iterating index
     const index = tx.objectStore(STORE_ANALYSES).index('docId');
     const req = index.openCursor(IDBKeyRange.only(id));
-    req.onsuccess = (e: any) => {
-      const cursor = e.target.result;
+    req.onsuccess = (e: Event) => {
+      const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
       if (cursor) {
         cursor.delete();
         cursor.continue();
@@ -158,7 +158,7 @@ export async function getAnalysisCache<T>(cacheKey: string): Promise<T | null> {
   });
 }
 
-export async function saveProfile(profile: any): Promise<void> {
+export async function saveProfile(profile: Record<string, unknown>): Promise<void> {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_PROFILE, 'readwrite');
@@ -169,7 +169,7 @@ export async function saveProfile(profile: any): Promise<void> {
   });
 }
 
-export async function getProfile(): Promise<any | null> {
+export async function getProfile(): Promise<Record<string, unknown> | null> {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_PROFILE, 'readonly');

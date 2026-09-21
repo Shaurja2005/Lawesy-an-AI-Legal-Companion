@@ -55,8 +55,8 @@ export async function POST(req: Request) {
       temperature: 0.2,
     });
 
-    return (result as any).toTextStreamResponse();
-  } catch (err: any) {
+    return result.toDataStreamResponse();
+  } catch (err: unknown) {
     console.error('[API Ask Error]', err);
     return new Response('Failed to process chat request', { status: 500 });
   }
