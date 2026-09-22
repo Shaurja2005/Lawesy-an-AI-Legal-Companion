@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
   
   // Create CSP
@@ -54,7 +54,6 @@ export const config = {
       source: '/((?!_next/static|_next/image|favicon.ico).*)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
-        { type: 'purpose', value: 'prefetch' },
       ],
     },
   ],
