@@ -37,7 +37,7 @@ export function t<L extends Record<string, unknown>>(locale: L, path: string): s
   let current: unknown = locale;
   for (const part of parts) {
     if (current == null || typeof current !== 'object') return path;
-    current = current[part];
+    current = (current as Record<string, unknown>)[part];
   }
   return typeof current === 'string' ? current : path;
 }
