@@ -7,10 +7,12 @@ import { useAnalysis } from '@/hooks/use-analysis';
 import type { ParsedDocument } from '@/lib/parser';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Printer } from 'lucide-react';
+import { useI18n } from '@/components/providers/i18n-provider';
 
 export default function LawyerBriefPage({ params }: { params: Promise<{ docId: string }> }) {
   const resolvedParams = use(params);
   const router = useRouter();
+  const { tr } = useI18n();
   const { documents, loading: docsLoading } = useDocumentLibrary();
   
   const [doc, setDoc] = useState<any>(null);
@@ -27,7 +29,7 @@ export default function LawyerBriefPage({ params }: { params: Promise<{ docId: s
   const { summary, analyses, inconsistencies, missingProtections, decision, loading: analysisLoading } = useAnalysis(resolvedParams.docId, parsed);
 
   if (docsLoading || analysisLoading || !doc) {
-    return <div className="p-8 text-center text-ink-muted">Loading brief...</div>;
+    return <div className="p-8 text-center text-ink-muted">{tr.brief.loading}</div>;
   }
 
   const highRisk = analyses?.filter(a => a.risk === 'high') || [];
@@ -38,40 +40,40 @@ export default function LawyerBriefPage({ params }: { params: Promise<{ docId: s
       {/* Non-printable header */}
       <div className="flex items-center justify-between mb-8 print:hidden">
         <Button variant="ghost" onClick={() => router.back()} className="gap-2 text-ink-muted">
-          <ArrowLeft className="w-4 h-4" /> Back to Desk
+          <ArrowLeft className="w-4 h-4" /> {tr.brief.backButton}
         </Button>
         <Button onClick={() => window.print()} className="gap-2">
-          <Printer className="w-4 h-4" /> Print Brief
+          <Printer className="w-4 h-4" /> {tr.brief.printButton}
         </Button>
       </div>
 
       {/* Printable Area - Legal Memo styling */}
       <div className="bg-white text-black p-12 shadow-sm print:shadow-none print:p-0 font-serif">
         <div className="border-b-2 border-black pb-4 mb-8">
-          <h1 className="text-3xl font-bold uppercase tracking-wider mb-6 text-center">Legal Review Memo</h1>
+          <h1 className="text-3xl font-bold uppercase tracking-wider mb-6 text-center">{tr.brief.title}</h1>
           
           <div className="grid grid-cols-[100px_1fr] gap-2 text-sm">
-            <span className="font-bold uppercase">To:</span>
-            <span>Reviewing Attorney</span>
+            <span className="font-bold uppercase">{tr.brief.toLabel}:</span>
+            <span>{tr.brief.toValue}</span>
             
-            <span className="font-bold uppercase">From:</span>
-            <span>Lawesy Automated Review</span>
+            <span className="font-bold uppercase">{tr.brief.fromLabel}:</span>
+            <span>{tr.brief.fromValue}</span>
             
-            <span className="font-bold uppercase">Date:</span>
+            <span className="font-bold uppercase">{tr.brief.dateLabel}:</span>
             <span>{new Date().toLocaleDateString()}</span>
             
-            <span className="font-bold uppercase">Subject:</span>
-            <span>Review of {doc.filename || 'Document'}</span>
+            <span className="font-bold uppercase">{tr.brief.subjectLabel}:</span>
+            <span>{tr.brief.reviewOf} {doc.filename || tr.common.untitled}</span>
           </div>
         </div>
 
         <div className="space-y-8 text-[15px] leading-relaxed">
           <section>
-            <h2 className="text-lg font-bold uppercase border-b border-gray-300 pb-1 mb-3">1. Executive Summary</h2>
+            <h2 className="text-lg font-bold uppercase border-b border-gray-300 pb-1 mb-3">{tr.brief.section1}</h2>
             <p className="mb-4">{summary?.oneLine}</p>
             {decision?.escalation && (
               <div className="bg-red-50 border-l-4 border-red-600 p-4 my-4 font-sans text-sm">
-                <strong>URGENT FLAG:</strong> {decision.escalation.reasons.join('; ')}
+                <strong>{tr.brief.urgentFlag}:</strong> {decision.escalation.reasons.join('; ')}
               </div>
             )}
             <ul className="list-disc pl-5 space-y-2">
@@ -80,14 +82,14 @@ export default function LawyerBriefPage({ params }: { params: Promise<{ docId: s
           </section>
 
           <section>
-            <h2 className="text-lg font-bold uppercase border-b border-gray-300 pb-1 mb-3">2. Material Risks & Red Flags</h2>
+            <h2 className="text-lg font-bold uppercase border-b border-gray-300 pb-1 mb-3">{tr.brief.section2}</h2>
             {highRisk.length === 0 ? (
-              <p className="italic text-gray-600">No high-risk clauses identified.</p>
+              <p className="italic text-gray-600">{tr.brief.noHighRisk}</p>
             ) : (
               <div className="space-y-6">
                 {highRisk.map((r, i) => (
                   <div key={i}>
-                    <h3 className="font-bold mb-1">{r.title} (Clause {r.clauseId})</h3>
+                    <h3 className="font-bold mb-1">{r.title} ({tr.brief.clause} {r.clauseId})</h3>
                     <p className="mb-2">{r.riskReason}</p>
                     <blockquote className="border-l-2 border-gray-400 pl-4 py-1 my-2 bg-gray-50 italic text-sm">
                       "{r.citations[0]?.quote}"
@@ -100,11 +102,11 @@ export default function LawyerBriefPage({ params }: { params: Promise<{ docId: s
 
           {(inconsistencies.length > 0 || missingProtections.length > 0) && (
             <section>
-              <h2 className="text-lg font-bold uppercase border-b border-gray-300 pb-1 mb-3">3. Draft Deficiencies</h2>
+              <h2 className="text-lg font-bold uppercase border-b border-gray-300 pb-1 mb-3">{tr.brief.section3}</h2>
               
               {missingProtections.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="font-bold mb-2">Missing Standard Protections</h3>
+                  <h3 className="font-bold mb-2">{tr.brief.missingProtections}</h3>
                   <ul className="list-disc pl-5 space-y-2">
                     {missingProtections.map((mp, i) => (
                       <li key={i}><strong>{mp.item}:</strong> {mp.whyItMatters}</li>
@@ -115,10 +117,10 @@ export default function LawyerBriefPage({ params }: { params: Promise<{ docId: s
 
               {inconsistencies.length > 0 && (
                 <div>
-                  <h3 className="font-bold mb-2">Internal Contradictions</h3>
+                  <h3 className="font-bold mb-2">{tr.brief.contradictions}</h3>
                   <ul className="list-disc pl-5 space-y-2">
                     {inconsistencies.map((inc, i) => (
-                      <li key={i}>{inc.description} (See: {inc.clauseIds.join(', ')})</li>
+                      <li key={i}>{inc.description} ({tr.brief.see}: {inc.clauseIds.join(', ')})</li>
                     ))}
                   </ul>
                 </div>
@@ -127,7 +129,7 @@ export default function LawyerBriefPage({ params }: { params: Promise<{ docId: s
           )}
 
           <section>
-            <h2 className="text-lg font-bold uppercase border-b border-gray-300 pb-1 mb-3">4. Client Obligations</h2>
+            <h2 className="text-lg font-bold uppercase border-b border-gray-300 pb-1 mb-3">{tr.brief.section4}</h2>
             <ul className="list-disc pl-5 space-y-2">
               {analyses?.flatMap(a => a.obligations || []).filter(o => o.who === 'user').map((o, i) => (
                 <li key={i}>{o.action}</li>

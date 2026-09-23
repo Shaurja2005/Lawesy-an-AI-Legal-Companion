@@ -1,13 +1,14 @@
 "use client";
 
-import { useAnalysis } from '@/hooks/use-analysis';
+import type { ClauseAnalysis } from '@/lib/schemas/ai';
 import { Paper } from '@/components/ui/paper';
 import { Button } from '@/components/ui/button';
 import { CalendarPlus, CheckCircle2, Circle, Download } from 'lucide-react';
 import { useState } from 'react';
+import { useI18n } from '@/components/providers/i18n-provider';
 
-export function Checklist({ docId, parsed }: { docId: string; parsed: any }) {
-  const { analyses, loading } = useAnalysis(docId, parsed);
+export function Checklist({ analyses, loading }: { analyses: ClauseAnalysis[] | null; loading: boolean }) {
+  const { tr } = useI18n();
   const [completed, setCompleted] = useState<Set<string>>(new Set());
 
   if (loading) return <div className="animate-pulse h-32 bg-accent/10 rounded-lg"></div>;
@@ -47,7 +48,7 @@ export function Checklist({ docId, parsed }: { docId: string; parsed: any }) {
       `DESCRIPTION:Source: ${deadline.source} (Clause ${deadline.clauseId})\\n\\nRelative: ${deadline.relative || 'N/A'}`,
       'END:VEVENT',
       'END:VCALENDAR'
-    ].join('\\r\\n');
+    ].join('\r\n');
 
     const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -63,7 +64,7 @@ export function Checklist({ docId, parsed }: { docId: string; parsed: any }) {
     <div className="space-y-8">
       {obligations.length > 0 && (
         <div>
-          <h3 className="font-heading font-semibold text-lg text-ink mb-4">Your Obligations</h3>
+          <h3 className="font-heading font-semibold text-lg text-ink mb-4">{tr.act.yourObligations}</h3>
           <Paper className="p-0 overflow-hidden divide-y divide-border/50">
             {obligations.map((ob, i) => {
               const id = `ob_${i}`;
@@ -90,21 +91,21 @@ export function Checklist({ docId, parsed }: { docId: string; parsed: any }) {
 
       {deadlines.length > 0 && (
         <div>
-          <h3 className="font-heading font-semibold text-lg text-ink mb-4">Deadlines & Timelines</h3>
+          <h3 className="font-heading font-semibold text-lg text-ink mb-4">{tr.act.deadlines}</h3>
           <Paper className="p-0 overflow-hidden divide-y divide-border/50">
             {deadlines.map((dl, i) => (
               <div key={i} className="flex items-center justify-between p-4 hover:bg-accent/5 transition-colors">
                 <div>
                   <p className="text-base font-body text-ink font-medium">{dl.description}</p>
                   <p className="text-sm text-ink-muted mt-1">
-                    {dl.date ? `Date: ${dl.date}` : dl.relative ? `Timeline: ${dl.relative}` : 'No explicit date'}
+                    {dl.date ? `${tr.act.dateLabel}: ${dl.date}` : dl.relative ? `${tr.act.timeline}: ${dl.relative}` : tr.act.noDate}
                   </p>
                   <p className="text-xs text-ink-muted mt-1 uppercase tracking-wider">
                     {dl.source} ({dl.clauseId})
                   </p>
                 </div>
                 <Button variant="secondary" size="sm" onClick={() => generateICS(dl)} className="gap-2 shrink-0">
-                  <CalendarPlus className="w-4 h-4" /> Add to Calendar
+                  <CalendarPlus className="w-4 h-4" /> {tr.act.addToCalendar}
                 </Button>
               </div>
             ))}
@@ -113,7 +114,7 @@ export function Checklist({ docId, parsed }: { docId: string; parsed: any }) {
       )}
 
       {obligations.length === 0 && deadlines.length === 0 && (
-        <p className="text-ink-muted italic">No specific obligations or deadlines were identified for you.</p>
+        <p className="text-ink-muted italic">{tr.act.noObligations}</p>
       )}
     </div>
   );

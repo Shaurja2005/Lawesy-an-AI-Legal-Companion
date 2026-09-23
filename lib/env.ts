@@ -4,6 +4,8 @@ import { z } from 'zod';
 const serverSchema = z.object({
   LLM_PROVIDER: z.enum(['gemini', 'anthropic', 'openai', 'mock']).default('mock'),
   LLM_MODEL: z.string().optional(),
+  // Comma-separated models tried in order when LLM_MODEL is rate-limited or unavailable
+  LLM_FALLBACK_MODELS: z.string().optional(),
   GOOGLE_GENERATIVE_AI_API_KEY: z.string().optional(),
   ANTHROPIC_API_KEY: z.string().optional(),
   OPENAI_API_KEY: z.string().optional(),
@@ -45,6 +47,7 @@ const serverSchema = z.object({
 const processEnv = {
   LLM_PROVIDER: process.env.LLM_PROVIDER,
   LLM_MODEL: process.env.LLM_MODEL,
+  LLM_FALLBACK_MODELS: process.env.LLM_FALLBACK_MODELS,
   GOOGLE_GENERATIVE_AI_API_KEY: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
   OPENAI_API_KEY: process.env.OPENAI_API_KEY,

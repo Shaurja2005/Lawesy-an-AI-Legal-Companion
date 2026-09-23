@@ -8,10 +8,12 @@ import { useDocumentLibrary } from '@/hooks/use-document-library';
 import { Skeleton } from '@/components/ui/skeleton';
 import { IndexCard } from '@/components/ui/index-card';
 import { ShieldCheck, Zap, Scale } from 'lucide-react';
+import { useI18n } from '@/components/providers/i18n-provider';
 
 export default function DeskPage() {
+  const { tr } = useI18n();
   const router = useRouter();
-  const { status, parse, result } = useParser();
+  const { status, parse, result, error: parseError } = useParser();
   const { addDocument } = useDocumentLibrary();
   const savedRef = useRef(false);
 
@@ -35,10 +37,10 @@ export default function DeskPage() {
       {/* Hero */}
       <div className="text-center space-y-3 pt-4">
         <h1 className="font-heading font-semibold text-3xl md:text-4xl text-ink">
-          Understand your legal documents.
+          {tr.desk.heroTitle}
         </h1>
         <p className="text-base text-ink-muted font-ui max-w-xl mx-auto leading-relaxed">
-          Lawesy translates dense contracts into plain language, highlights hidden risks, and tells you what to watch out for — based on your role.
+          {tr.desk.heroSubtitle}
         </p>
       </div>
 
@@ -55,17 +57,23 @@ export default function DeskPage() {
               <Skeleton className="h-3 w-1/2 mx-auto" />
               <Skeleton className="h-3 w-2/3 mx-auto" />
               <p className="text-sm font-medium text-accent mt-4">
-                Parsing document and identifying clauses…
+                {tr.desk.parsing}
               </p>
             </div>
           </div>
         )}
       </div>
 
+      {status === 'error' && (
+        <p role="alert" className="-mt-8 text-center text-sm text-risk-high font-ui">
+          {tr.input.errorParse} {parseError}
+        </p>
+      )}
+
       {/* Privacy note */}
       <div className="flex items-center justify-center gap-2 text-sm text-risk-low font-ui -mt-6">
         <ShieldCheck className="w-4 h-4 shrink-0" />
-        <span>Private &amp; secure — everything stays in your browser until you choose to analyse it.</span>
+        <span>{tr.desk.privacyNote}</span>
       </div>
 
       {/* How it works */}
@@ -75,9 +83,9 @@ export default function DeskPage() {
             <div className="w-9 h-9 rounded-full bg-desk/20 flex items-center justify-center">
               <span className="font-heading font-semibold text-ink">1</span>
             </div>
-            <h3 className="font-heading font-medium text-ink">Drop it on the desk</h3>
+            <h3 className="font-heading font-medium text-ink">{tr.desk.step1Title}</h3>
             <p className="text-sm text-ink-muted font-ui leading-relaxed">
-              Upload a PDF, Word doc, or paste text directly. We instantly segment it into labelled clauses.
+              {tr.desk.step1Body}
             </p>
           </div>
         </IndexCard>
@@ -87,9 +95,9 @@ export default function DeskPage() {
             <div className="w-9 h-9 rounded-full bg-desk/20 flex items-center justify-center">
               <Zap className="w-4 h-4 text-ink" />
             </div>
-            <h3 className="font-heading font-medium text-ink">AI translates it</h3>
+            <h3 className="font-heading font-medium text-ink">{tr.desk.step2Title}</h3>
             <p className="text-sm text-ink-muted font-ui leading-relaxed">
-              Jargon replaced with plain English. A clear summary generated for every section.
+              {tr.desk.step2Body}
             </p>
           </div>
         </IndexCard>
@@ -99,9 +107,9 @@ export default function DeskPage() {
             <div className="w-9 h-9 rounded-full bg-desk/20 flex items-center justify-center">
               <Scale className="w-4 h-4 text-ink" />
             </div>
-            <h3 className="font-heading font-medium text-ink">Spot the risks</h3>
+            <h3 className="font-heading font-medium text-ink">{tr.desk.step3Title}</h3>
             <p className="text-sm text-ink-muted font-ui leading-relaxed">
-              Checked against your role and jurisdiction to flag unfair obligations and missing protections.
+              {tr.desk.step3Body}
             </p>
           </div>
         </IndexCard>

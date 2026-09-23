@@ -7,6 +7,9 @@ import {
 } from '@/lib/db';
 import type { ParsedDocument } from '@/lib/parser';
 
+// Every hook instance keeps its own list; this event tells the others (e.g. the sidebar) to reload.
+const LIBRARY_CHANGED = 'lawesy:library-changed';
+
 interface UseDocumentLibraryReturn {
   documents: StoredDocument[];
   loading: boolean;
@@ -38,17 +41,22 @@ export function useDocumentLibrary(): UseDocumentLibraryReturn {
     Promise.resolve().then(() => {
       if (mounted) refresh(); 
     });
-    return () => { mounted = false; };
+    const onChanged = () => { if (mounted) refresh(); };
+    window.addEventListener(LIBRARY_CHANGED, onChanged);
+    return () => {
+      mounted = false;
+      window.removeEventListener(LIBRARY_CHANGED, onChanged);
+    };
   }, [refresh]);
 
   const addDocument = useCallback(async (parsed: ParsedDocument) => {
     await saveDocument(parsed);
-    await refresh();
+    window.dispatchEvent(new Event(LIBRARY_CHANGED));
   }, [refresh]);
 
   const removeDocument = useCallback(async (id: string) => {
     await deleteDocument(id);
-    await refresh();
+    window.dispatchEvent(new Event(LIBRARY_CHANGED));
   }, [refresh]);
 
   return { documents, loading, error, addDocument, removeDocument, refresh };

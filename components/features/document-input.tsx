@@ -11,6 +11,7 @@ import {
   isFileSizeOk,
 } from '@/lib/upload';
 import { UploadCloud, FileText, X } from 'lucide-react';
+import { useI18n } from '@/components/providers/i18n-provider';
 
 export interface DocumentInputProps {
   onSubmit: (text: string, filename?: string) => void;
@@ -18,6 +19,8 @@ export interface DocumentInputProps {
 }
 
 export function DocumentInput({ onSubmit, isLoading }: DocumentInputProps) {
+  const { tr } = useI18n();
+  const [extracting, setExtracting] = useState(false);
   const [tab, setTab] = useState<'upload' | 'paste'>('upload');
   const [pasteText, setPasteText] = useState('');
   const [dragOver, setDragOver] = useState(false);
@@ -33,15 +36,15 @@ export function DocumentInput({ onSubmit, isLoading }: DocumentInputProps) {
       const text = await res.text();
       onSubmit(text, name);
     } catch (err) {
-      setError('Could not load sample document.');
+      setError(tr.input.errorSample);
     }
-  }, [onSubmit]);
+  }, [onSubmit, tr]);
 
   const validateFile = useCallback((file: File): string | null => {
-    if (!isAcceptedFileType(file.type)) return 'Unsupported file type. Please use PDF, DOCX, or plain text.';
-    if (!isFileSizeOk(file.size)) return 'File is too large. Maximum size is 20 MB.';
+    if (!isAcceptedFileType(file.type) && !/\.(pdf|docx|txt)$/i.test(file.name)) return tr.input.errorType;
+    if (!isFileSizeOk(file.size)) return tr.input.errorSize;
     return null;
-  }, []);
+  }, [tr]);
 
   const handleFileSelect = useCallback((file: File) => {
     const err = validateFile(file);
@@ -65,28 +68,40 @@ export function DocumentInput({ onSubmit, isLoading }: DocumentInputProps) {
   const handleSubmit = useCallback(async () => {
     setError(null);
     if (tab === 'paste') {
-      if (!pasteText.trim()) { setError('Please paste some text.'); return; }
+      if (!pasteText.trim()) { setError(tr.input.errorNoText); return; }
       onSubmit(pasteText.trim());
     } else {
-      if (!selectedFile) { setError('Please select a file.'); return; }
-      // For plain text files, read directly; PDF handled server-side
-      if (selectedFile.type === 'text/plain') {
+      if (!selectedFile) { setError(tr.input.errorNoFile); return; }
+      // Plain text is read in the browser; PDF/DOCX text is extracted server-side
+      if (selectedFile.type === 'text/plain' || selectedFile.name.toLowerCase().endsWith('.txt')) {
         const text = await selectedFile.text();
+        if (!text.trim()) { setError(tr.input.errorEmptyFile); return; }
         onSubmit(text, selectedFile.name);
       } else {
-        // Binary files go to server — send the File object as form data
-        const form = new FormData();
-        form.append('file', selectedFile);
-        // Caller handles via dedicated API route; we pass filename as signal
-        onSubmit(`__FILE__:${selectedFile.name}`, selectedFile.name);
+        setExtracting(true);
+        try {
+          const form = new FormData();
+          form.append('file', selectedFile);
+          const res = await fetch('/api/extract', { method: 'POST', body: form });
+          const data = await res.json().catch(() => null);
+          if (!res.ok || !data?.text) {
+            setError(data?.error?.message ?? tr.input.errorExtract);
+            return;
+          }
+          onSubmit(data.text, selectedFile.name);
+        } catch {
+          setError(tr.input.errorExtract);
+        } finally {
+          setExtracting(false);
+        }
       }
     }
-  }, [tab, pasteText, selectedFile, onSubmit]);
+  }, [tab, pasteText, selectedFile, onSubmit, tr]);
 
   return (
     <div className="flex flex-col gap-4 max-w-2xl w-full mx-auto">
       {/* Tabs */}
-      <div className="flex gap-2" role="tablist" aria-label="Input method">
+      <div className="flex gap-2" role="tablist" aria-label={tr.input.methodLabel}>
         {(['upload', 'paste'] as const).map(t => (
           <button
             key={t}
@@ -100,7 +115,7 @@ export function DocumentInput({ onSubmit, isLoading }: DocumentInputProps) {
                 : 'text-ink-muted hover:text-ink bg-paper-alt'
             )}
           >
-            {t === 'upload' ? 'Upload file' : 'Paste text'}
+            {t === 'upload' ? tr.input.tabUpload : tr.input.tabPaste}
           </button>
         ))}
       </div>
@@ -112,7 +127,7 @@ export function DocumentInput({ onSubmit, isLoading }: DocumentInputProps) {
             <div
               role="button"
               tabIndex={0}
-              aria-label="Drop zone: click or drag a file here"
+              aria-label={tr.input.dropZoneLabel}
               onDragOver={e => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}
               onDrop={handleDrop}
@@ -127,9 +142,9 @@ export function DocumentInput({ onSubmit, isLoading }: DocumentInputProps) {
             >
               <UploadCloud className="w-10 h-10 text-ink-muted" aria-hidden="true" />
               <div className="text-sm text-ink-muted">
-                <span className="font-medium text-ink">Click to upload</span> or drag & drop
+                <span className="font-medium text-ink">{tr.input.clickToUpload}</span> {tr.input.orDragDrop}
               </div>
-              <p className="text-xs text-ink-faint">PDF, DOCX, or TXT · Max 20 MB</p>
+              <p className="text-xs text-ink-faint">{tr.input.fileHint}</p>
             </div>
             <input
               ref={fileInputRef}
@@ -137,7 +152,7 @@ export function DocumentInput({ onSubmit, isLoading }: DocumentInputProps) {
               accept={ACCEPTED_FILE_TYPES.join(',')}
               onChange={handleInputChange}
               className="sr-only"
-              aria-label="File input"
+              aria-label={tr.input.fileInputLabel}
             />
 
             {/* Selected file badge */}
@@ -147,7 +162,7 @@ export function DocumentInput({ onSubmit, isLoading }: DocumentInputProps) {
                 <span className="flex-1 truncate">{selectedFile.name}</span>
                 <button
                   onClick={e => { e.stopPropagation(); setSelectedFile(null); }}
-                  aria-label="Remove selected file"
+                  aria-label={tr.input.removeFile}
                   className="text-ink-muted hover:text-ink"
                 >
                   <X className="w-4 h-4" />
@@ -158,22 +173,22 @@ export function DocumentInput({ onSubmit, isLoading }: DocumentInputProps) {
             {/* Samples */}
             {!selectedFile && (
               <div className="mt-4 pt-4 border-t border-paper-line">
-                <p className="text-xs font-semibold text-ink-muted mb-2 uppercase tracking-wider">Or try a sample</p>
+                <p className="text-xs font-semibold text-ink-muted mb-2 uppercase tracking-wider">{tr.input.trySample}</p>
                 <div className="flex flex-wrap gap-2">
-                  <Button variant="secondary" size="sm" onClick={() => loadSample('/samples/lease.txt', 'Sample Lease Agreement.txt')} type="button">Lease Agreement</Button>
-                  <Button variant="secondary" size="sm" onClick={() => loadSample('/samples/offer.txt', 'Sample Offer Letter.txt')} type="button">Offer Letter</Button>
-                  <Button variant="secondary" size="sm" onClick={() => loadSample('/samples/tos.txt', 'Sample Terms of Service.txt')} type="button">Terms of Service</Button>
+                  <Button variant="secondary" size="sm" onClick={() => loadSample('/samples/lease.txt', 'Sample Lease Agreement.txt')} type="button">{tr.input.sampleLease}</Button>
+                  <Button variant="secondary" size="sm" onClick={() => loadSample('/samples/offer.txt', 'Sample Offer Letter.txt')} type="button">{tr.input.sampleOffer}</Button>
+                  <Button variant="secondary" size="sm" onClick={() => loadSample('/samples/tos.txt', 'Sample Terms of Service.txt')} type="button">{tr.input.sampleTos}</Button>
                 </div>
               </div>
             )}
           </div>
         ) : (
           <Textarea
-            placeholder="Paste the text of your legal document here…"
+            placeholder={tr.input.pastePlaceholder}
             value={pasteText}
             onChange={e => setPasteText(e.target.value)}
             className="min-h-[200px] font-body text-base leading-relaxed"
-            aria-label="Document text"
+            aria-label={tr.input.documentTextLabel}
           />
         )}
 
@@ -187,10 +202,10 @@ export function DocumentInput({ onSubmit, isLoading }: DocumentInputProps) {
         <Button
           className="mt-4 w-full"
           onClick={handleSubmit}
-          disabled={isLoading}
-          aria-busy={isLoading}
+          disabled={isLoading || extracting}
+          aria-busy={isLoading || extracting}
         >
-          {isLoading ? 'Processing…' : 'Analyse document →'}
+          {extracting ? tr.input.extracting : isLoading ? tr.input.processing : tr.input.submit}
         </Button>
       </div>
     </div>

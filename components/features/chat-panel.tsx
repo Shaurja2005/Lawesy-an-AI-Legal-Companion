@@ -8,6 +8,7 @@ import type { ParsedDocument } from '@/lib/parser';
 import { getChatHistory, saveChatHistory, ChatMessage } from '@/lib/db';
 import { useProfile } from '@/hooks/use-profile';
 import { MessageSquare, Send, Loader2, Info } from 'lucide-react';
+import { useI18n } from '@/components/providers/i18n-provider';
 
 interface ChatPanelProps {
   document: ParsedDocument;
@@ -16,6 +17,7 @@ interface ChatPanelProps {
 
 export function ChatPanel({ document, onClauseClick }: ChatPanelProps) {
   const { profile } = useProfile();
+  const { tr } = useI18n();
   const searcher = useMemo(() => new DocumentSearch(document), [document]);
   const [isReady, setIsReady] = useState(false);
   
@@ -62,6 +64,7 @@ export function ChatPanel({ document, onClauseClick }: ChatPanelProps) {
           contextClauses: contextClauses.map(c => ({ id: c.id, heading: c.sectionIndex.toString(), normalizedText: c.normalizedText })),
           role: profile?.role,
           goal: profile?.goal,
+          language: profile?.outputLanguage,
         })
       });
 
@@ -82,9 +85,12 @@ export function ChatPanel({ document, onClauseClick }: ChatPanelProps) {
         setMessages([...newMessages, { ...assistantMsg }]);
       }
 
+      if (!assistantMsg.content.trim()) throw new Error('Empty response from model');
       saveChatHistory(document.id, [...newMessages, assistantMsg]);
     } catch (err) {
       console.error(err);
+      // Show the failure in the thread instead of silently dropping the question
+      setMessages([...newMessages, { id: (Date.now() + 2).toString(), role: 'assistant', content: tr.ask.error, createdAt: Date.now() }]);
     } finally {
       setIsLoading(false);
     }
@@ -102,7 +108,7 @@ export function ChatPanel({ document, onClauseClick }: ChatPanelProps) {
             key={i}
             onClick={() => onClauseClick?.(clauseId)}
             className="inline-flex items-center px-1.5 py-0.5 mx-1 text-xs font-medium bg-primary/10 text-primary rounded border border-primary/20 hover:bg-primary/20 transition-colors cursor-pointer"
-            title="Jump to clause"
+            title={tr.ask.jumpToClause}
           >
             {clauseId}
           </button>
@@ -118,14 +124,14 @@ export function ChatPanel({ document, onClauseClick }: ChatPanelProps) {
     <div className="flex flex-col h-full bg-paper dark:bg-paper-dark border-l border-border/50">
       <div className="flex items-center gap-2 px-4 py-3 border-b border-border/50 bg-paper-texture">
         <MessageSquare className="w-4 h-4 text-primary" />
-        <h3 className="font-medium text-sm">Ask about this document</h3>
+        <h3 className="font-medium text-sm">{tr.ask.header}</h3>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={scrollRef}>
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center space-y-3 opacity-60">
             <Info className="w-8 h-8" />
-            <p className="text-sm">Ask questions about your document.<br />Answers are grounded in the text.</p>
+            <p className="text-sm whitespace-pre-line">{tr.ask.emptyState}</p>
           </div>
         )}
 
@@ -154,7 +160,7 @@ export function ChatPanel({ document, onClauseClick }: ChatPanelProps) {
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="E.g. Can I sublet the apartment?"
+            placeholder={tr.ask.placeholder}
             className="min-h-[44px] max-h-32 resize-none rounded-lg pr-12 focus-visible:ring-1"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
@@ -169,6 +175,7 @@ export function ChatPanel({ document, onClauseClick }: ChatPanelProps) {
             size="icon" 
             disabled={!input.trim() || isLoading}
             className="absolute right-2 bottom-2 w-7 h-7 rounded-md"
+            aria-label={tr.ask.send}
           >
             <Send className="w-3.5 h-3.5" />
           </Button>

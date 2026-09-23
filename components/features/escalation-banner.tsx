@@ -2,12 +2,14 @@
 
 import { ShieldAlert, Shield } from 'lucide-react';
 import type { EscalationFlag } from '@/lib/engine/decide';
+import { useI18n } from '@/components/providers/i18n-provider';
 
 interface EscalationBannerProps {
   escalation: EscalationFlag;
 }
 
 export function EscalationBanner({ escalation }: EscalationBannerProps) {
+  const { tr } = useI18n();
   const isUrgent = escalation.level === 'urgent';
   const isRecommended = escalation.level === 'recommended';
 
@@ -19,25 +21,25 @@ export function EscalationBanner({ escalation }: EscalationBannerProps) {
   let bgClass = 'bg-paper-sand';
   let borderClass = 'border-ink-muted';
   let titleClass = 'text-ink';
-  let titleText = 'Consider Professional Advice';
+  let titleText: string = tr.escalation.optional;
 
   if (isUrgent) {
     Icon = ShieldAlert;
     bgClass = 'bg-red-50';
     borderClass = 'border-red-300';
     titleClass = 'text-red-900';
-    titleText = 'Urgent: Legal Professional Recommended';
+    titleText = tr.escalation.urgent;
   } else if (isRecommended) {
     Icon = ShieldAlert;
     bgClass = 'bg-amber-50';
     borderClass = 'border-amber-300';
     titleClass = 'text-amber-900';
-    titleText = 'Strongly Consider a Lawyer';
+    titleText = tr.escalation.recommended;
   }
 
   return (
-    <div 
-      role={isUrgent ? 'alert' : 'status'} 
+    <div
+      role={isUrgent ? 'alert' : 'status'}
       className={`border-l-4 p-4 rounded-r-sm shadow-sm mb-6 ${bgClass} ${borderClass}`}
     >
       <div className="flex gap-4">
@@ -53,10 +55,10 @@ export function EscalationBanner({ escalation }: EscalationBannerProps) {
           </ul>
           {isUrgent && (
             <div className="mt-4 p-3 bg-white bg-opacity-60 rounded border border-red-200">
-              <p className="text-sm font-semibold text-red-800 mb-1">Recommended Action:</p>
+              <p className="text-sm font-semibold text-red-800 mb-1">{tr.escalation.action}</p>
               <p className="text-sm text-ink-muted">
-                Please do not sign or agree to anything before consulting {escalation.suggestedProfessional}. 
-                You can use our &quot;Prepare Brief&quot; tool to help your lawyer get up to speed quickly.
+                {tr.escalation.consultBeforeSigning}{' '}
+                {tr.escalation.usePrepareBrief}
               </p>
             </div>
           )}

@@ -7,6 +7,7 @@ import type {
 } from '../schemas/ai';
 import type { UserProfile } from '@/hooks/use-profile';
 import { getFocusCategories } from './focus-maps';
+import { getTranslations } from '../i18n';
 
 export interface SuggestedAction {
   id: string;
@@ -55,6 +56,7 @@ export function decide(inputs: EngineInputs): EngineDecision {
   };
 
   const escalationReasons: string[] = [];
+  const tr = getTranslations(profile.outputLanguage);
   let escalationLevel: 'urgent' | 'recommended' | 'optional' | null = null;
 
   const upgradeEscalation = (level: 'urgent' | 'recommended' | 'optional') => {
@@ -88,13 +90,13 @@ export function decide(inputs: EngineInputs): EngineDecision {
   // R3: Legal notice
   if (classifier.docType === 'legal_notice' || profile.goal === 'respond_to_notice') {
     upgradeEscalation('recommended');
-    escalationReasons.push('Legal notices often require formal, timely responses.');
+    escalationReasons.push(tr.escalation.reasonNotice);
   }
 
   // R5: Sensitive domains
   if (classifier.sensitiveSignals && classifier.sensitiveSignals.length > 0) {
     upgradeEscalation('urgent');
-    escalationReasons.push(`This document touches on highly sensitive areas: ${classifier.sensitiveSignals.join(', ')}.`);
+    escalationReasons.push(tr.escalation.reasonSensitive.replace('{signals}', classifier.sensitiveSignals.join(', ')));
     decision.infoOnlyMode = true;
   }
 
@@ -147,14 +149,14 @@ export function decide(inputs: EngineInputs): EngineDecision {
     
     if (hasUpcomingDeadline) {
       upgradeEscalation('urgent');
-      escalationReasons.push('There is a deadline within the next 14 days.');
+      escalationReasons.push(tr.escalation.reasonDeadline);
     }
 
     // R6: High risk
     const highRiskClauses = findings.clauses.filter(c => c.risk === 'high');
     if (highRiskClauses.length >= 2 || (findings.overallRisk === 'high' && profile.goal === 'decide_to_sign')) {
       upgradeEscalation('recommended');
-      escalationReasons.push('Significant risks were detected.');
+      escalationReasons.push(tr.escalation.reasonHighRisk);
       decision.suggestedActions.push({
         id: 'prep_brief',
         label: 'Prepare lawyer brief',

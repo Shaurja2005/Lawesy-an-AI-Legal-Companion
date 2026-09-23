@@ -7,8 +7,10 @@ import { useDocumentLibrary } from '@/hooks/use-document-library';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { FileText } from 'lucide-react';
+import { useI18n } from '@/components/providers/i18n-provider';
 
 export default function CompareLandingPage() {
+  const { tr } = useI18n();
   const { documents, loading } = useDocumentLibrary();
 
   return (
@@ -16,18 +18,17 @@ export default function CompareLandingPage() {
       <div className="flex items-center gap-4">
         <GitCompare className="w-8 h-8 text-primary" />
         <div>
-          <h1 className="font-heading font-semibold text-3xl text-ink">Compare Documents</h1>
+          <h1 className="font-heading font-semibold text-3xl text-ink">{tr.compare.title}</h1>
           <p className="text-ink-muted text-sm font-ui mt-1">
-            Select two documents from your library to compare them side-by-side.
+            {tr.compare.subtitle}
           </p>
         </div>
       </div>
 
       <div className="space-y-4">
-        <h2 className="font-heading font-semibold text-lg text-ink">Your Library</h2>
+        <h2 className="font-heading font-semibold text-lg text-ink">{tr.compare.library}</h2>
         <p className="text-sm text-ink-muted font-ui">
-          Open a document from your desk first, then click <strong>Compare</strong> in the document header to select a
-          second version to compare it against.
+          {tr.compare.instructions}
         </p>
 
         {loading ? (
@@ -39,11 +40,10 @@ export default function CompareLandingPage() {
         ) : documents.length === 0 ? (
           <Paper className="p-8 text-center">
             <p className="text-ink-muted text-sm">
-              No documents in your library yet.{' '}
+              {tr.compare.noDocuments}{' '}
               <Link href="/desk" className="text-primary underline underline-offset-2">
-                Upload one on the Desk
-              </Link>{' '}
-              to get started.
+                {tr.compare.uploadCta}
+              </Link>
             </p>
           </Paper>
         ) : (
@@ -53,7 +53,7 @@ export default function CompareLandingPage() {
                 <div className="flex items-center gap-3">
                   <FileText className="w-5 h-5 text-ink-muted shrink-0" />
                   <div>
-                    <p className="font-medium text-sm text-ink">{doc.filename ?? 'Untitled document'}</p>
+                    <p className="font-medium text-sm text-ink">{doc.filename ?? tr.common.untitled}</p>
                     <p className="text-xs text-ink-muted">{new Date(doc.createdAt).toLocaleDateString()}</p>
                   </div>
                 </div>
@@ -62,7 +62,7 @@ export default function CompareLandingPage() {
                     href={`/desk/${doc.id}`}
                     className="text-xs text-primary font-medium hover:underline"
                   >
-                    Open
+                    {tr.compare.openButton}
                   </Link>
                   <CompareModal currentDocId={doc.id} />
                 </div>

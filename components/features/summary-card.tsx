@@ -2,8 +2,10 @@
 
 import { Paper } from '@/components/ui/paper';
 import type { Summary } from '@/lib/schemas/ai';
+import { useI18n } from '@/components/providers/i18n-provider';
 
 export function SummaryCard({ summary }: { summary: Summary }) {
+  const { tr } = useI18n();
   return (
     <Paper className="p-6 mb-8 bg-paper border border-paper-line shadow-sm relative overflow-hidden">
       <div className="absolute top-0 right-0 w-16 h-16 bg-accent opacity-5 rounded-bl-full" />
@@ -14,16 +16,16 @@ export function SummaryCard({ summary }: { summary: Summary }) {
       
       <div className="flex flex-wrap gap-4 text-sm font-ui text-ink-muted mb-4 pb-4 border-b border-paper-line">
         <div>
-          <span className="font-semibold text-ink">Parties:</span> {summary.parties.join(' vs ')}
+          <span className="font-semibold text-ink">{tr.summary.parties}:</span> {summary.parties.join(' vs ')}
         </div>
         {summary.term && (
           <div>
-            <span className="font-semibold text-ink">Term:</span> {summary.term}
+            <span className="font-semibold text-ink">{tr.summary.term}:</span> {summary.term}
           </div>
         )}
         {summary.money && summary.money.length > 0 && (
           <div>
-            <span className="font-semibold text-ink">Financials:</span> {summary.money.join(', ')}
+            <span className="font-semibold text-ink">{tr.summary.financials}:</span> {summary.money.join(', ')}
           </div>
         )}
       </div>

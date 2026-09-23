@@ -20,9 +20,12 @@ import { Checklist } from '@/components/features/checklist';
 import { generateMarkdownExport, downloadMarkdown } from '@/lib/export';
 import { ListTodo, Download, Printer } from 'lucide-react';
 import Link from 'next/link';
+import { useI18n } from '@/components/providers/i18n-provider';
+import { Loader2 } from 'lucide-react';
 
 export default function DocumentViewerPage({ params }: { params: Promise<{ docId: string }> }) {
   const resolvedParams = use(params);
+  const { tr, lang } = useI18n();
   const { documents, loading: docsLoading } = useDocumentLibrary();
   const [doc, setDoc] = useState<StoredDocument | null>(null);
   
@@ -44,12 +47,13 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ docId
     missingProtections, 
     decision, 
     loading: analysisLoading, 
+    error: analysisError,
     setClassification 
   } = useAnalysis(resolvedParams.docId, parsed);
 
   const [activeTab, setActiveTab] = useState<'original' | 'plain' | 'clauses' | 'ask' | 'act'>('original');
 
-  if (docsLoading || !doc || analysisLoading) {
+  if (docsLoading || !doc) {
     return (
       <div className="max-w-4xl mx-auto py-8 space-y-8">
         <Skeleton className="h-10 w-2/3" />
@@ -69,14 +73,28 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ docId
         <div>
           <div className="flex items-center gap-3 text-ink-muted mb-2">
             <FileText className="w-5 h-5" />
-            <span className="font-ui text-sm">{doc.filename ?? 'Untitled document'}</span>
+            <span className="font-ui text-sm">{doc.filename ?? tr.common.untitled}</span>
           </div>
           <h1 className="font-heading font-semibold text-2xl text-ink">
-            {doc.filename ? doc.filename.replace(/\.[^/.]+$/, "") : 'Document Details'}
+            {doc.filename ? doc.filename.replace(/\.[^/.]+$/, "") : tr.workspace.documentDetails}
           </h1>
         </div>
         <CompareModal currentDocId={doc.id} />
       </div>
+
+      {analysisLoading && (
+        <div role="status" className="flex items-center gap-2 mb-6 text-sm text-ink-muted bg-accent/5 px-4 py-2 rounded-full border border-accent/20 w-fit">
+          <Loader2 className="w-4 h-4 animate-spin text-accent" />
+          {tr.workspace.analyzing}
+        </div>
+      )}
+
+      {analysisError && (
+        <div role="alert" className="mb-6 border-l-4 border-risk-high bg-paper p-4 text-sm">
+          <p className="font-semibold text-ink">{tr.workspace.analysisFailed}</p>
+          <p className="text-ink-muted mt-1">{analysisError}</p>
+        </div>
+      )}
 
       {decision?.escalation && (
         <EscalationBanner escalation={decision.escalation} />
@@ -94,46 +112,46 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ docId
         )}
         
         {/* Tabs Header */}
-        <div className="flex border-b border-paper-line px-4">
+        <div className="flex border-b border-paper-line px-4 overflow-x-auto">
           <button
             onClick={() => setActiveTab('original')}
-            className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm transition-colors border-b-2 ${
+            className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm whitespace-nowrap shrink-0 transition-colors border-b-2 ${
               activeTab === 'original' ? 'border-ink text-ink' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
-            <AlignLeft className="w-4 h-4" /> Original Text
+            <AlignLeft className="w-4 h-4" /> {tr.workspace.tabOriginal}
           </button>
           <button
             onClick={() => setActiveTab('plain')}
-            className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm transition-colors border-b-2 ${
+            className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm whitespace-nowrap shrink-0 transition-colors border-b-2 ${
               activeTab === 'plain' ? 'border-ink text-ink' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
-            <FileSearch className="w-4 h-4" /> Plain Language
+            <FileSearch className="w-4 h-4" /> {tr.workspace.tabPlain}
           </button>
           <button
             onClick={() => setActiveTab('clauses')}
-            className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm transition-colors border-b-2 ${
+            className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm whitespace-nowrap shrink-0 transition-colors border-b-2 ${
               activeTab === 'clauses' ? 'border-ink text-ink' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
-            <ShieldCheck className="w-4 h-4" /> Key Clauses & Risks
+            <ShieldCheck className="w-4 h-4" /> {tr.workspace.tabClauses}
           </button>
           <button
             onClick={() => setActiveTab('ask')}
-            className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm transition-colors border-b-2 ${
+            className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm whitespace-nowrap shrink-0 transition-colors border-b-2 ${
               activeTab === 'ask' ? 'border-ink text-ink' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
-            <MessageSquare className="w-4 h-4" /> Ask
+            <MessageSquare className="w-4 h-4" /> {tr.workspace.tabAsk}
           </button>
           <button
             onClick={() => setActiveTab('act')}
-            className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm transition-colors border-b-2 ${
+            className={`flex items-center gap-2 px-6 py-4 font-semibold text-sm whitespace-nowrap shrink-0 transition-colors border-b-2 ${
               activeTab === 'act' ? 'border-ink text-ink' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
-            <ListTodo className="w-4 h-4" /> Next Steps
+            <ListTodo className="w-4 h-4" /> {tr.workspace.tabNextSteps}
           </button>
         </div>
 
@@ -169,7 +187,8 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ docId
           {activeTab === 'plain' && (
             <div className="space-y-8">
               {parsed!.sections.map((section, i) => (
-                <PlainLanguageSection key={`plain-sec-${section.index}`} section={section} index={i + 1} />
+                // Keyed by language so a language switch discards simplifications made in the old one
+                <PlainLanguageSection key={`plain-sec-${section.index}-${lang}`} section={section} index={i + 1} />
               ))}
             </div>
           )}
@@ -181,12 +200,12 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ docId
               {(inconsistencies.length > 0 || missingProtections.length > 0) && (
                 <div className="bg-amber-50 border border-amber-200 rounded p-6 mb-8">
                   <h3 className="font-heading font-bold text-amber-900 text-lg mb-4 flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5" /> Worth a Second Look
+                    <AlertCircle className="w-5 h-5" /> {tr.clauses.worthSecondLook}
                   </h3>
                   
                   {missingProtections.length > 0 && (
                     <div className="mb-4">
-                      <h4 className="text-sm font-bold text-amber-800 uppercase tracking-wider mb-2">Missing Protections</h4>
+                      <h4 className="text-sm font-bold text-amber-800 uppercase tracking-wider mb-2">{tr.clauses.missingProtections}</h4>
                       <ul className="space-y-2">
                         {missingProtections.map((mp, i) => (
                           <li key={i} className="text-sm text-amber-900">
@@ -199,11 +218,11 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ docId
 
                   {inconsistencies.length > 0 && (
                     <div>
-                      <h4 className="text-sm font-bold text-amber-800 uppercase tracking-wider mb-2">Contradictory Terms</h4>
+                      <h4 className="text-sm font-bold text-amber-800 uppercase tracking-wider mb-2">{tr.clauses.contradictoryTerms}</h4>
                       <ul className="space-y-2">
                         {inconsistencies.map((inc, i) => (
                           <li key={i} className="text-sm text-amber-900">
-                            {inc.description} (See clauses: {inc.clauseIds.join(', ')})
+                            {inc.description} ({tr.clauses.seeClauses}: {inc.clauseIds.join(', ')})
                           </li>
                         ))}
                       </ul>
@@ -214,8 +233,13 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ docId
 
               {/* Clauses List */}
               <div className="space-y-6">
+                {!analyses && analysisLoading && (
+                  <div className="flex items-center gap-2 text-ink-muted text-sm">
+                    <Loader2 className="w-4 h-4 animate-spin" /> {tr.clauses.analyzingClauses}
+                  </div>
+                )}
                 {analyses?.length === 0 && (
-                  <p className="text-ink-muted italic">No specific clauses highlighted for this document type.</p>
+                  <p className="text-ink-muted italic">{tr.clauses.noClauses}</p>
                 )}
                 {analyses?.map((analysis, i) => (
                   <div key={i} className="border border-paper-line rounded p-5 bg-paper-sand/50">
@@ -227,11 +251,11 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ docId
                     
                     {analysis.obligations && analysis.obligations.length > 0 && (
                       <div className="mb-4">
-                        <h4 className="text-xs font-bold text-ink-muted uppercase tracking-wider mb-2">Obligations</h4>
+                        <h4 className="text-xs font-bold text-ink-muted uppercase tracking-wider mb-2">{tr.clauses.obligations}</h4>
                         <ul className="space-y-1">
                           {analysis.obligations.map((ob, idx) => (
                             <li key={idx} className="text-sm text-ink flex gap-2">
-                              <span className="text-ink-muted">—</span> {ob.action} ({ob.who})
+                              <span className="text-ink-muted">—</span> {ob.action} ({tr.who[ob.who] ?? ob.who})
                             </li>
                           ))}
                         </ul>
@@ -239,7 +263,7 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ docId
                     )}
 
                     <div className="mt-4 pt-4 border-t border-paper-line">
-                      <h4 className="text-xs font-bold text-ink-muted uppercase tracking-wider mb-2">Source Text ({analysis.clauseId})</h4>
+                      <h4 className="text-xs font-bold text-ink-muted uppercase tracking-wider mb-2">{tr.clauses.sourceText} ({analysis.clauseId})</h4>
                       <p className="text-sm font-serif italic text-ink-muted pl-4 border-l-2 border-accent/30">
                         "{analysis.citations[0]?.quote || '...'}"
                       </p>
@@ -273,11 +297,11 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ docId
             <div className="space-y-12">
               <div>
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="font-heading font-semibold text-xl text-ink">Action Plan</h2>
+                  <h2 className="font-heading font-semibold text-xl text-ink">{tr.act.heading}</h2>
                   <div className="flex gap-3">
                     <Link href={`/brief/${doc.id}`} target="_blank">
                       <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border/50 rounded-lg hover:bg-accent/5 transition-colors">
-                        <Printer className="w-4 h-4" /> Lawyer Brief
+                        <Printer className="w-4 h-4" /> {tr.act.lawyerBriefButton}
                       </button>
                     </Link>
                     <button 
@@ -287,11 +311,11 @@ export default function DocumentViewerPage({ params }: { params: Promise<{ docId
                       }}
                       className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border/50 rounded-lg hover:bg-accent/5 transition-colors"
                     >
-                      <Download className="w-4 h-4" /> Export MD
+                      <Download className="w-4 h-4" /> {tr.act.exportButton}
                     </button>
                   </div>
                 </div>
-                <Checklist docId={doc.id} parsed={parsed!} />
+                <Checklist analyses={analyses} loading={analysisLoading} />
               </div>
             </div>
           )}

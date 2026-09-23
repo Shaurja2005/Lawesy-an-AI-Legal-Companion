@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { serverEnv } from '../env';
+import { AIProviderError } from '../ai/adapter';
 
 // ─── Rate Limiter ─────────────────────────────────────────────────────────────
 //
@@ -160,6 +161,13 @@ export function withApiHandler<T>(
       return response;
       
     } catch (error: unknown) {
+      if (error instanceof AIProviderError) {
+        console.warn(`[API] ${error.code}: ${error.message}`);
+        return NextResponse.json(
+          { error: { code: error.code, message: error.message } },
+          { status: error.status, headers: error.status === 429 ? { 'Retry-After': '300' } : undefined }
+        );
+      }
       console.error('[API Error]', error);
       return NextResponse.json(
         { error: { code: 'INTERNAL_SERVER_ERROR', message: 'An unexpected error occurred while processing the request.' } },

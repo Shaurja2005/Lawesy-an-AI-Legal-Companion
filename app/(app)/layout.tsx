@@ -1,6 +1,7 @@
 import { SideNav } from '@/components/layout/side-nav';
 import { BottomNav } from '@/components/layout/bottom-nav';
 import { LibraryDrawer } from '@/components/layout/library-drawer';
+import { AppFooter } from '@/components/layout/localized-chrome';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -32,10 +33,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Disclaimer footer */}
-      <footer className="px-6 py-3 text-xs text-ink-faint text-center border-t border-paper-line bg-paper/10">
-        Legal information to help you understand documents — not legal advice.
-        For decisions with serious consequences, consult a qualified lawyer.
-      </footer>
+      <AppFooter />
 
       {/* ── Mobile bottom nav ────────────────────────────── */}
       <BottomNav />

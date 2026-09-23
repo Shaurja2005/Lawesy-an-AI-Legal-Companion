@@ -4,15 +4,17 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Files, GitCompare, Settings, Info } from 'lucide-react';
+import { useI18n } from '@/components/providers/i18n-provider';
 
 const mobileNavItems = [
-  { href: '/desk', label: 'Desk', icon: Files },
-  { href: '/compare', label: 'Compare', icon: GitCompare },
-  { href: '/settings', label: 'Settings', icon: Settings },
-  { href: '/about', label: 'About', icon: Info },
+  { href: '/desk', key: 'desk', icon: Files },
+  { href: '/compare', key: 'compare', icon: GitCompare },
+  { href: '/settings', key: 'settings', icon: Settings },
+  { href: '/about', key: 'about', icon: Info },
 ];
 
 export function BottomNav() {
+  const { tr } = useI18n();
   const pathname = usePathname();
 
   return (
@@ -20,7 +22,8 @@ export function BottomNav() {
       aria-label="Mobile navigation"
       className="fixed bottom-0 inset-x-0 z-40 flex justify-around items-center border-t border-paper-line bg-paper py-2 md:hidden"
     >
-      {mobileNavItems.map(({ href, label, icon: Icon }) => {
+      {mobileNavItems.map(({ href, key, icon: Icon }) => {
+        const label = tr.nav[key];
         const active = pathname === href || pathname.startsWith(href + '/');
         return (
           <Link

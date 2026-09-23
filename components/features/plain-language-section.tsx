@@ -5,6 +5,7 @@ import { useProfile } from '@/hooks/use-profile';
 import { Loader2 } from 'lucide-react';
 import { TermHighlighter } from '@/components/features/term-highlighter';
 import type { Section } from '@/lib/parser';
+import { useI18n } from '@/components/providers/i18n-provider';
 
 interface PlainLanguageSectionProps {
   section: Section;
@@ -12,10 +13,13 @@ interface PlainLanguageSectionProps {
 }
 
 export function PlainLanguageSection({ section, index }: PlainLanguageSectionProps) {
+  const { tr } = useI18n();
   const { profile } = useProfile();
   const [plain, setPlain] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
+
+  const language = profile?.outputLanguage || 'en';
 
   const rawText = section.clauses.map(c => c.rawText).join(' ');
 
@@ -29,8 +33,8 @@ export function PlainLanguageSection({ section, index }: PlainLanguageSectionPro
         body: JSON.stringify({
           sectionId: `S${index}`,
           text: rawText.substring(0, 4000),
-          level: 'everyday',
-          language: profile?.outputLanguage || 'en',
+          level: 'simple',
+          language,
         }),
       });
       if (res.ok) {
@@ -54,25 +58,25 @@ export function PlainLanguageSection({ section, index }: PlainLanguageSectionPro
         <div className="font-body text-sm text-ink-muted opacity-80 leading-relaxed">{rawText}</div>
       </div>
       <div>
-        <h3 className="font-heading text-sm text-accent mb-2 uppercase tracking-wide">Plain English</h3>
+        <h3 className="font-heading text-sm text-accent mb-2 uppercase tracking-wide">{tr.plain.heading}</h3>
         {!loaded && !loading ? (
           <button
             onClick={handleLoad}
             className="text-sm text-primary font-medium underline underline-offset-2 hover:text-primary/80 transition-colors"
           >
-            Simplify this section →
+            {tr.plain.simplifyButton}
           </button>
         ) : loading ? (
           <div className="flex items-center gap-2 text-ink-muted text-sm py-4">
             <Loader2 className="w-4 h-4 animate-spin" />
-            Simplifying…
+            {tr.plain.simplifying}
           </div>
         ) : plain ? (
           <div className="font-body text-base text-ink leading-relaxed bg-accent/5 p-4 rounded border border-accent/10">
             <TermHighlighter text={plain} />
           </div>
         ) : (
-          <p className="text-sm text-ink-muted italic">Could not simplify this section.</p>
+          <p className="text-sm text-ink-muted italic">{tr.plain.failed}</p>
         )}
       </div>
     </div>

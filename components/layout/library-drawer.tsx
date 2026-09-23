@@ -6,8 +6,10 @@ import { useDocumentLibrary } from '@/hooks/use-document-library';
 import { FileText, Trash2, LibraryBig } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/components/providers/i18n-provider';
 
 export function LibraryDrawer() {
+  const { tr } = useI18n();
   const { documents, loading, removeDocument } = useDocumentLibrary();
   const pathname = usePathname();
   const router = useRouter();
@@ -15,7 +17,7 @@ export function LibraryDrawer() {
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.preventDefault();
     e.stopPropagation();
-    if (window.confirm('Delete this document?')) {
+    if (window.confirm(tr.library.deleteConfirm)) {
       await removeDocument(id);
       if (pathname.includes(id)) {
         router.push('/desk');
@@ -27,7 +29,7 @@ export function LibraryDrawer() {
     <div className="flex flex-col flex-1 overflow-hidden mt-6">
       <div className="flex items-center gap-2 px-3 mb-2 text-ink-muted text-xs font-semibold uppercase tracking-wider">
         <LibraryBig className="w-4 h-4" />
-        <span>Your Library</span>
+        <span>{tr.library.heading}</span>
       </div>
       
       <div className="flex-1 overflow-y-auto px-2 space-y-1 pb-4">
@@ -40,7 +42,7 @@ export function LibraryDrawer() {
           ))
         ) : documents.length === 0 ? (
           <div className="px-3 py-4 text-sm text-ink-faint text-center border border-dashed border-paper-line rounded-[4px] mx-1">
-            No documents yet
+            {tr.library.noDocuments}
           </div>
         ) : (
           documents.map(doc => {
@@ -59,7 +61,7 @@ export function LibraryDrawer() {
                 <FileText className={cn('w-4 h-4 mt-0.5 shrink-0', active ? 'text-accent' : 'text-ink-muted')} />
                 <div className="flex-1 min-w-0">
                   <div className={cn('text-sm font-medium line-clamp-2 leading-tight', active ? 'text-ink' : 'text-ink-muted group-hover:text-ink')}>
-                    {doc.filename ?? 'Untitled document'}
+                    {doc.filename ?? tr.common.untitled}
                   </div>
                   <div className="text-xs text-ink-faint mt-1 flex justify-between items-center">
                     <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
@@ -68,7 +70,7 @@ export function LibraryDrawer() {
                 <button
                   onClick={(e) => handleDelete(e, doc.id)}
                   className="opacity-0 group-hover:opacity-100 p-1 text-ink-muted hover:text-risk-high rounded focus-visible:opacity-100 transition-opacity"
-                  aria-label="Delete document"
+                  aria-label={tr.library.deleteLabel}
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>

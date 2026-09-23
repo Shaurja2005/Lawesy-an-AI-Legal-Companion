@@ -1,14 +1,15 @@
-import { streamText } from 'ai';
-import { google } from '@ai-sdk/google';
 import { buildAskPrompt } from '@/lib/ai/prompts/ask.v1';
+import { streamText } from '@/lib/ai/adapter';
 import { serverEnv } from '@/lib/env';
 
 // We use the standard Next.js App Router API route format for streaming
-export const maxDuration = 30;
+export const maxDuration = 60;
+
+type IncomingMessage = { role?: string; content?: unknown };
 
 export async function POST(req: Request) {
   try {
-    const { messages, contextClauses, role, goal } = await req.json();
+    const { messages, contextClauses, role, goal, language } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       return new Response('Messages array is required', { status: 400 });
@@ -26,6 +27,7 @@ export async function POST(req: Request) {
       contextClauses,
       role,
       goal,
+      language,
     });
 
     if (serverEnv.LLM_PROVIDER === 'mock') {
@@ -46,16 +48,21 @@ export async function POST(req: Request) {
       });
     }
 
-    // Call the AI SDK
-    // Since we're using streamText with Vercel's useChat, we pass the messages array
-    const result = await streamText({
-      model: google(serverEnv.LLM_MODEL ?? 'gemini-2.5-flash'),
+    // Client messages carry extra fields (id, createdAt); the model only needs role + content.
+    const modelMessages = (messages as IncomingMessage[])
+      .filter(m => (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string' && m.content.trim())
+      .slice(-10)
+      .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content as string }));
+
+    const result = streamText({
+      task: 'ask',
       system,
-      messages,
+      messages: modelMessages,
       temperature: 0.2,
     });
 
-    return result.toDataStreamResponse();
+    // The chat panel reads the body as plain text.
+    return result.toTextStreamResponse();
   } catch (err: unknown) {
     console.error('[API Ask Error]', err);
     return new Response('Failed to process chat request', { status: 500 });

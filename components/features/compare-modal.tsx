@@ -6,6 +6,7 @@ import { useDocumentLibrary } from '@/hooks/use-document-library';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { FileText, GitCompare, Loader2 } from 'lucide-react';
+import { useI18n } from '@/components/providers/i18n-provider';
 
 interface CompareModalProps {
   currentDocId: string;
@@ -14,6 +15,7 @@ interface CompareModalProps {
 
 export function CompareModal({ currentDocId, trigger }: CompareModalProps) {
   const router = useRouter();
+  const { tr } = useI18n();
   const { documents, loading } = useDocumentLibrary();
   const [open, setOpen] = useState(false);
   const [navigating, setNavigating] = useState(false);
@@ -30,13 +32,13 @@ export function CompareModal({ currentDocId, trigger }: CompareModalProps) {
       <DialogTrigger asChild>
         {trigger || (
           <Button variant="secondary" size="sm" className="gap-2">
-            <GitCompare className="w-4 h-4" /> Compare
+            <GitCompare className="w-4 h-4" /> {tr.workspace.compareButton}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-paper text-ink border-border/50">
         <DialogHeader>
-          <DialogTitle className="font-heading font-semibold text-xl">Select a document to compare</DialogTitle>
+          <DialogTitle className="font-heading font-semibold text-xl">{tr.compare.selectDocument}</DialogTitle>
         </DialogHeader>
         
         <div className="mt-4 space-y-2 max-h-[300px] overflow-y-auto">
@@ -46,7 +48,7 @@ export function CompareModal({ currentDocId, trigger }: CompareModalProps) {
             </div>
           ) : otherDocs.length === 0 ? (
             <div className="py-8 text-center text-ink-muted text-sm border border-dashed border-border/50 rounded-lg">
-              No other documents found.<br />Upload another version to compare.
+              {tr.compare.noOtherDocs}<br />{tr.compare.uploadAnother}
             </div>
           ) : (
             otherDocs.map(doc => (
@@ -60,7 +62,7 @@ export function CompareModal({ currentDocId, trigger }: CompareModalProps) {
                   <FileText className="w-4 h-4" />
                 </div>
                 <div className="flex-1 overflow-hidden">
-                  <p className="font-ui text-sm font-medium truncate">{doc.filename ?? 'Untitled'}</p>
+                  <p className="font-ui text-sm font-medium truncate">{doc.filename ?? tr.common.untitled}</p>
                   <p className="text-xs text-ink-muted">{new Date(doc.createdAt).toLocaleDateString()}</p>
                 </div>
               </button>

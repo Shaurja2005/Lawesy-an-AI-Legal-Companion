@@ -6,6 +6,7 @@ import { SiteHeader } from '@/components/layout/site-header';
 import { Toaster } from '@/components/ui/toaster';
 import { PreferencesProvider } from '@/components/providers/preferences-provider';
 import { I18nProvider } from '@/components/providers/i18n-provider';
+import { SkipLink } from '@/components/layout/localized-chrome';
 
 const headingFont = Fraunces({ subsets: ['latin'], variable: '--font-heading', display: 'swap' });
 const bodyFont = Source_Serif_4({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
@@ -37,12 +38,7 @@ export default function RootLayout({
           <PreferencesProvider>
             <I18nProvider>
               {/* Skip-to-content for screen readers */}
-              <a
-                href="#main-content"
-                className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[200] focus:px-4 focus:py-2 focus:bg-paper focus:text-ink focus:rounded focus:shadow"
-              >
-                Skip to content
-              </a>
+              <SkipLink />
 
               {/* Sticky site-wide header */}
               <SiteHeader />

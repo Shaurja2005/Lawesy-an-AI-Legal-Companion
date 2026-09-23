@@ -8,9 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
+import type { Role, Goal, Expertise, OutputLanguage } from '@/lib/schemas/ai';
+import { useI18n } from '@/components/providers/i18n-provider';
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { tr } = useI18n();
   const { profile, saveProfile, loading } = useProfile();
   
   // Use local state for form editing before saving
@@ -37,112 +40,103 @@ export default function OnboardingPage() {
   return (
     <div className="max-w-2xl mx-auto py-12">
       <div className="text-center mb-8">
-        <h1 className="font-heading font-semibold text-3xl text-ink">Welcome to Lawesy</h1>
-        <p className="text-ink-muted mt-2 font-ui">Help us tailor your experience. (You can change this anytime)</p>
+        <h1 className="font-heading font-semibold text-3xl text-ink">{tr.onboarding.title}</h1>
+        <p className="text-ink-muted mt-2 font-ui">{tr.onboarding.subtitle}</p>
       </div>
 
       <Paper variant="lined" padding="lg" className="space-y-8">
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-ink mb-1">Your Role</label>
+            <label className="block text-sm font-semibold text-ink mb-1">{tr.onboarding.roleLabel}</label>
             <Select 
               value={form.role} 
-              onValueChange={val => setForm({ ...form, role: val as ProfileRole })}
+              onValueChange={val => setForm({ ...form, role: val as Role })}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a role" />
+                <SelectValue placeholder={tr.onboarding.rolePlaceholder} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="tenant">Tenant</SelectItem>
-                <SelectItem value="landlord">Landlord</SelectItem>
-                <SelectItem value="employee">Employee / Job Seeker</SelectItem>
-                <SelectItem value="employer">Employer</SelectItem>
-                <SelectItem value="freelancer">Freelancer</SelectItem>
-                <SelectItem value="small_business">Small Business</SelectItem>
-                <SelectItem value="consumer">Consumer</SelectItem>
-                <SelectItem value="notice_recipient">Received a Notice</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                {Object.keys(tr.roles).map(r => (
+                  <SelectItem key={r} value={r}>{tr.roles[r]}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-ink mb-1">Your Goal</label>
+            <label className="block text-sm font-semibold text-ink mb-1">{tr.onboarding.goalLabel}</label>
             <Select 
               value={form.goal} 
-              onValueChange={val => setForm({ ...form, goal: val as ProfileGoal })}
+              onValueChange={val => setForm({ ...form, goal: val as Goal })}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select your goal" />
+                <SelectValue placeholder={tr.onboarding.goalPlaceholder} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="understand">Just understand what it means</SelectItem>
-                <SelectItem value="decide_to_sign">Decide whether to sign</SelectItem>
-                <SelectItem value="negotiate">Prepare to negotiate</SelectItem>
-                <SelectItem value="resolve_dispute">Resolve a dispute</SelectItem>
-                <SelectItem value="respond_to_notice">Respond to a legal notice</SelectItem>
-                <SelectItem value="compare_options">Compare options</SelectItem>
+                {Object.keys(tr.goals).map(g => (
+                  <SelectItem key={g} value={g}>{tr.goals[g]}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-ink mb-1">Legal Expertise</label>
+            <label className="block text-sm font-semibold text-ink mb-1">{tr.onboarding.expertiseLabel}</label>
             <Select 
               value={form.expertise} 
-              onValueChange={val => setForm({ ...form, expertise: val as LegalExpertise })}
+              onValueChange={val => setForm({ ...form, expertise: val as Expertise })}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select expertise" />
+                <SelectValue placeholder={tr.onboarding.expertisePlaceholder} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="new">New to this (Explain everything)</SelectItem>
-                <SelectItem value="some">Some familiarity</SelectItem>
-                <SelectItem value="comfortable">Comfortable with legal text</SelectItem>
+                {Object.keys(tr.expertise).map(x => (
+                  <SelectItem key={x} value={x}>{tr.expertise[x]}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-ink mb-1">Country</label>
+              <label className="block text-sm font-semibold text-ink mb-1">{tr.onboarding.countryLabel}</label>
               <Input 
                 value={form.jurisdiction.country} 
                 onChange={e => setForm({ ...form, jurisdiction: { ...form.jurisdiction, country: e.target.value } })}
-                placeholder="e.g. US, IN, UK"
+                placeholder={tr.onboarding.countryPlaceholder}
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-ink mb-1">State / Region</label>
+              <label className="block text-sm font-semibold text-ink mb-1">{tr.onboarding.regionLabel}</label>
               <Input 
                 value={form.jurisdiction.region || ''} 
                 onChange={e => setForm({ ...form, jurisdiction: { ...form.jurisdiction, region: e.target.value } })}
-                placeholder="Optional"
+                placeholder={tr.onboarding.regionPlaceholder}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-ink mb-1">Language</label>
+            <label className="block text-sm font-semibold text-ink mb-1">{tr.onboarding.languageLabel}</label>
             <Select 
               value={form.outputLanguage} 
               onValueChange={val => setForm({ ...form, outputLanguage: val as OutputLanguage })}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select language" />
+                <SelectValue placeholder={tr.onboarding.languagePlaceholder} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="hi">Hindi (हिंदी)</SelectItem>
-                <SelectItem value="ta">Tamil (தமிழ்)</SelectItem>
+                {Object.keys(tr.languages).map(l => (
+                  <SelectItem key={l} value={l}>{tr.languages[l]}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
 
           <div className="pt-4 flex items-center justify-between border-t border-paper-line">
             <div>
-              <label className="block text-sm font-semibold text-ink">Redact PII</label>
-              <p className="text-xs text-ink-muted">Hide names, emails, and phone numbers before analysis.</p>
+              <label className="block text-sm font-semibold text-ink">{tr.onboarding.redactLabel}</label>
+              <p className="text-xs text-ink-muted">{tr.onboarding.redactDescription}</p>
             </div>
             <Switch 
               checked={form.redactPII}
@@ -152,8 +146,8 @@ export default function OnboardingPage() {
         </div>
 
         <div className="flex gap-4 pt-4">
-          <Button onClick={handleSave} className="flex-1">Save & Continue</Button>
-          <Button onClick={handleSkip} variant="ghost" className="flex-1">Skip for now</Button>
+          <Button onClick={handleSave} className="flex-1">{tr.onboarding.saveButton}</Button>
+          <Button onClick={handleSkip} variant="ghost" className="flex-1">{tr.onboarding.skipButton}</Button>
         </div>
       </Paper>
     </div>

@@ -75,7 +75,7 @@ export default function SettingsPage() {
               ))}
             </SelectContent>
           </Select>
-          <p className="text-xs text-ink-muted mt-1">AI outputs (summaries, clause analysis, answers) will be generated in this language.</p>
+          <p className="text-xs text-ink-muted mt-1">{tr.settings.languageHelp}</p>
         </div>
       </Paper>
 
@@ -107,13 +107,13 @@ export default function SettingsPage() {
           <h2 className="font-heading font-semibold text-lg text-ink">{tr.settings.profileSection}</h2>
         </div>
         <p className="text-sm text-ink-muted">
-          You are viewing as: <strong className="text-ink">{profile.role}</strong>
+          {tr.settings.viewingAs} <strong className="text-ink">{tr.roles[profile.role] ?? profile.role}</strong>
           {profile.jurisdiction.country && <> · <strong className="text-ink">{profile.jurisdiction.country}</strong></>}
           {profile.jurisdiction.region && <>, {profile.jurisdiction.region}</>}
-          {' · '}<strong className="text-ink">{profile.expertise}</strong>
+          {' · '}<strong className="text-ink">{tr.expertise[profile.expertise] ?? profile.expertise}</strong>
         </p>
         <a href="/onboarding" className="text-sm text-primary hover:underline underline-offset-2">
-          Edit profile in onboarding →
+          {tr.settings.editProfile}
         </a>
       </Paper>
 
@@ -142,11 +142,11 @@ export default function SettingsPage() {
             className="gap-2"
           >
             <Trash2 className="w-4 h-4" />
-            {clearConfirm ? 'Confirm — this cannot be undone' : tr.settings.clearDataButton}
+            {clearConfirm ? tr.settings.confirmClear : tr.settings.clearDataButton}
           </Button>
           {clearConfirm && (
             <button className="ml-4 text-xs text-ink-muted underline" onClick={() => setClearConfirm(false)}>
-              Cancel
+              {tr.common.cancel}
             </button>
           )}
         </div>
