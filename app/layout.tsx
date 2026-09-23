@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { Fraunces, Source_Serif_4, IBM_Plex_Sans, IBM_Plex_Mono, Noto_Sans_Devanagari, Noto_Sans_Tamil } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
@@ -21,11 +22,16 @@ export const metadata: Metadata = {
   description: 'Understand your legal documents',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // proxy.ts sends a per-request CSP nonce. Reading headers makes every page render per request,
+  // so Next.js can stamp the nonce onto its <script> tags (prerendered pages would ship
+  // nonce-less scripts that the CSP blocks). next-themes needs it for its inline script too.
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
+
   return (
     <html lang="en" suppressHydrationWarning className={`${headingFont.variable} ${bodyFont.variable} ${uiFont.variable} ${monoFont.variable} ${devanagariFont.variable} ${tamilFont.variable}`}>
       <body className="bg-desk text-ink antialiased" suppressHydrationWarning>
@@ -34,6 +40,7 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
+          nonce={nonce}
         >
           <PreferencesProvider>
             <I18nProvider>
